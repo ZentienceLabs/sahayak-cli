@@ -101,6 +101,7 @@ sahayak learn promote --intent restart-web --phrase "bounce the web app"   # hum
 
 ## Docs
 
+- [`docs/`](./docs/) — **start here**: [install](./docs/installation.md) · [configure](./docs/configuration.md) · [commands & options](./docs/commands.md) · [cartridges](./docs/cartridges.md) · [self-learning](./docs/self-learning.md).
 - [`RUNBOOK.md`](./RUNBOOK.md) — operational usage, every command, config knobs.
 - [`CARTRIDGE-ARCHITECTURE.md`](./CARTRIDGE-ARCHITECTURE.md) — the cartridge model, registry, self-learning, tech stack.
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md) — the division of labor (model / Go / human) and why.
