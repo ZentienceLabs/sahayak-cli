@@ -115,6 +115,18 @@ func shellSources(a *agent.Agent) tui.Sources {
 	return src
 }
 
+// pickModel selects a model: a Bubble Tea picker in rich mode, the bufio readline in plain
+// mode. Centralized so the bufio reader is only ever touched in plain mode.
+func pickModel(rich bool, in *bufio.Reader, models []string, current string) string {
+	if rich {
+		if pick, ok, err := tui.Select("Select a model (↑↓, Enter):", models, current); err == nil && ok {
+			return pick
+		}
+		return current
+	}
+	return chooseModel(in, models, current)
+}
+
 // buildRouter constructs the semantic intent router from the embedded default catalog
 // plus an optional user catalog file (SAHAYAK_CATALOG), embedding every example with
 // the configured embedder. With the default hash embedder this is instant and offline;
@@ -230,20 +242,25 @@ func runShell(ctx context.Context, args []string) error {
 		}
 	}
 
-	in := bufio.NewReader(os.Stdin)
-	interactive := tui.IsInteractive()
-
-	// Model selection: show the installed list and let the operator pick (Enter keeps
-	// the default). Only when we have a real terminal and an Ollama backend.
-	if interactive && cfg.Engine == config.EngineOllama {
-		if models, err := listModels(ctx, cfg.Endpoint); err == nil && len(models) > 0 {
-			cfg.Model = chooseModel(in, models, cfg.Model)
-		}
+	// Rich mode = Bubble Tea prompt + Bubble Tea approval gate (one input mechanism, no
+	// bufio); plain mode = bufio readline + line approver. We never MIX bufio and Bubble
+	// Tea on stdin — that's the source of input glitches on the Windows console.
+	rich := tui.IsInteractive() && os.Getenv("SAHAYAK_PLAIN_PROMPT") != "1"
+	var in *bufio.Reader
+	var approver agent.Approver
+	if rich {
+		approver = tui.NewApprover()
+	} else {
+		in = bufio.NewReader(os.Stdin)
+		approver = agent.NewLineApprover(in, os.Stdout)
 	}
 
-	// The shell is line-based, so use the line approver (not the full-screen TUI) and
-	// share its reader with our prompt loop — one stdin, no contention.
-	approver := agent.NewLineApprover(in, os.Stdout)
+	// Model selection on a real terminal (Enter keeps the default).
+	if tui.IsInteractive() && cfg.Engine == config.EngineOllama {
+		if models, err := listModels(ctx, cfg.Endpoint); err == nil && len(models) > 0 {
+			cfg.Model = pickModel(rich, in, models, cfg.Model)
+		}
+	}
 
 	a, cleanup, err := setupAgent(ctx, cfg, approver)
 	if err != nil {
@@ -252,11 +269,8 @@ func runShell(ctx context.Context, args []string) error {
 	defer cleanup()
 	a.MaxInvestigateSteps = 8
 
-	// Rich prompt (slash palette + @ entity picker) on a real terminal; plain readline
-	// otherwise or when SAHAYAK_PLAIN_PROMPT=1.
-	rich := tui.IsInteractive() && os.Getenv("SAHAYAK_PLAIN_PROMPT") != "1"
-
 	shellBanner(cfg.Model)
+	var history []string
 	for {
 		if ctx.Err() != nil {
 			return nil
@@ -264,10 +278,13 @@ func runShell(ctx context.Context, args []string) error {
 
 		var line string
 		if rich {
-			l, eof, perr := tui.Prompt("\033[36msahayak>\033[0m ", shellSources(a))
+			l, eof, perr := tui.Prompt("\033[36msahayak>\033[0m ", shellSources(a), history)
 			if perr != nil {
 				fmt.Fprintln(os.Stderr, "(rich prompt unavailable, falling back to plain input)")
 				rich = false
+				if in == nil {
+					in = bufio.NewReader(os.Stdin)
+				}
 				continue
 			}
 			if eof {
@@ -283,6 +300,10 @@ func runShell(ctx context.Context, args []string) error {
 				return nil
 			}
 			line = strings.TrimSpace(l)
+		}
+
+		if line != "" {
+			history = append(history, line) // for ↑/↓ recall in the rich prompt
 		}
 
 		// Slash commands (/help, /model, /cartridge …) — dispatched, never sent to the model.
@@ -322,7 +343,7 @@ func runShell(ctx context.Context, args []string) error {
 				fmt.Printf("routing: %s — switch by restarting with SAHAYAK_LEGACY=1 (or unset it)\n", mode)
 			case "model", "models":
 				if models, err := listModels(ctx, cfg.Endpoint); err == nil {
-					cfg.Model = chooseModel(in, models, cfg.Model)
+					cfg.Model = pickModel(rich, in, models, cfg.Model)
 					cleanup()
 					if a, cleanup, err = setupAgent(ctx, cfg, approver); err != nil {
 						return err
@@ -358,7 +379,7 @@ func runShell(ctx context.Context, args []string) error {
 			continue
 		case line == "models", line == ":models":
 			if models, err := listModels(ctx, cfg.Endpoint); err == nil {
-				cfg.Model = chooseModel(in, models, cfg.Model)
+				cfg.Model = pickModel(rich, in, models, cfg.Model)
 				cleanup()
 				if a, cleanup, err = setupAgent(ctx, cfg, approver); err != nil {
 					return err
