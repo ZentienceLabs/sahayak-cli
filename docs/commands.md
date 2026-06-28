@@ -55,10 +55,21 @@ Inside the shell:
 sahayak> list configmaps for web-api
 sahayak> how is web-api doing
 sahayak> ! kubectl get ns       # run a command yourself (still risk-gated)
-sahayak> models                 # re-pick the model mid-session
-sahayak> help                   # built-in shell commands
-sahayak> exit                   # or quit / :q / Ctrl-D
+sahayak> exit                   # or quit / Ctrl-D
 ```
+
+### Rich prompt (type-ahead) — on a real terminal
+The shell has a Claude-Code / Gemini-CLI-style editor with live completion:
+
+- **`/`** opens the **command palette** — `/help`, `/model`, `/models`, `/cartridge`,
+  `/learn`, `/knowledge`, `/memory`, `/clear`, `/legacy`, `/exit`.
+- **`@`** opens the **entity picker** — installed cartridges, plus the namespaces and
+  workloads the env cache has learned (e.g. `@web-api` → inserts `web-api`).
+- Keys: **Tab** accept · **↑/↓** move · **Esc** close popup · **Enter** submit · **Ctrl-D** exit.
+
+Slash commands take the same args as the top-level commands, e.g. `/cartridge install k8s`,
+`/learn suggest`, `/memory add "…"`. Set `SAHAYAK_PLAIN_PROMPT=1` for a basic readline prompt
+(also used automatically when stdin isn't a terminal).
 
 ---
 

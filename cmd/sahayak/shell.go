@@ -96,6 +96,25 @@ func setupAgent(ctx context.Context, cfg config.Config, approver agent.Approver)
 	return a, cleanup, nil
 }
 
+// shellSources populates the rich prompt's "@" entity picker — installed cartridges plus
+// the namespaces/workloads the env cache has learned (read fresh from disk each prompt).
+func shellSources(a *agent.Agent) tui.Sources {
+	var src tui.Sources
+	if a.Cartridges != nil {
+		for _, c := range a.Cartridges.Cartridges() {
+			src.Cartridges = append(src.Cartridges, c.Name)
+		}
+	}
+	es := envfacts.NewStore("")
+	for _, f := range es.Fresh(envfacts.KindNamespace, "") {
+		src.Namespaces = append(src.Namespaces, f.Name)
+	}
+	for _, f := range es.Fresh(envfacts.KindDeployment, "") {
+		src.Deployments = append(src.Deployments, f.Name)
+	}
+	return src
+}
+
 // buildRouter constructs the semantic intent router from the embedded default catalog
 // plus an optional user catalog file (SAHAYAK_CATALOG), embedding every example with
 // the configured embedder. With the default hash embedder this is instant and offline;
@@ -233,18 +252,90 @@ func runShell(ctx context.Context, args []string) error {
 	defer cleanup()
 	a.MaxInvestigateSteps = 8
 
+	// Rich prompt (slash palette + @ entity picker) on a real terminal; plain readline
+	// otherwise or when SAHAYAK_PLAIN_PROMPT=1.
+	rich := tui.IsInteractive() && os.Getenv("SAHAYAK_PLAIN_PROMPT") != "1"
+
 	shellBanner(cfg.Model)
 	for {
 		if ctx.Err() != nil {
 			return nil
 		}
-		fmt.Print("\n\033[36msahayak>\033[0m ")
-		line, err := in.ReadString('\n')
-		if err != nil { // EOF (Ctrl-D / closed pipe)
-			fmt.Println()
-			return nil
+
+		var line string
+		if rich {
+			l, eof, perr := tui.Prompt("\033[36msahayak>\033[0m ", shellSources(a))
+			if perr != nil {
+				fmt.Fprintln(os.Stderr, "(rich prompt unavailable, falling back to plain input)")
+				rich = false
+				continue
+			}
+			if eof {
+				fmt.Println()
+				return nil
+			}
+			line = strings.TrimSpace(l)
+		} else {
+			fmt.Print("\n\033[36msahayak>\033[0m ")
+			l, err := in.ReadString('\n')
+			if err != nil { // EOF (Ctrl-D / closed pipe)
+				fmt.Println()
+				return nil
+			}
+			line = strings.TrimSpace(l)
 		}
-		line = strings.TrimSpace(line)
+
+		// Slash commands (/help, /model, /cartridge …) — dispatched, never sent to the model.
+		if strings.HasPrefix(line, "/") {
+			fields := strings.Fields(line[1:])
+			if len(fields) == 0 {
+				continue
+			}
+			switch fields[0] {
+			case "exit", "quit", "q":
+				return nil
+			case "help", "h":
+				shellHelp()
+			case "clear":
+				fmt.Print("\033[2J\033[H")
+			case "cartridge", "cart":
+				if err := runCartridge(ctx, fields[1:]); err != nil {
+					fmt.Fprintf(os.Stderr, "error: %v\n", err)
+				}
+			case "learn":
+				if err := runLearn(ctx, fields[1:]); err != nil {
+					fmt.Fprintf(os.Stderr, "error: %v\n", err)
+				}
+			case "knowledge", "kb":
+				if err := runKnowledge(ctx, fields[1:]); err != nil {
+					fmt.Fprintf(os.Stderr, "error: %v\n", err)
+				}
+			case "memory", "mem":
+				if err := runMemory(ctx, fields[1:]); err != nil {
+					fmt.Fprintf(os.Stderr, "error: %v\n", err)
+				}
+			case "legacy":
+				mode := "cartridge engine (default)"
+				if a.Cartridges == nil {
+					mode = "legacy regex/router"
+				}
+				fmt.Printf("routing: %s — switch by restarting with SAHAYAK_LEGACY=1 (or unset it)\n", mode)
+			case "model", "models":
+				if models, err := listModels(ctx, cfg.Endpoint); err == nil {
+					cfg.Model = chooseModel(in, models, cfg.Model)
+					cleanup()
+					if a, cleanup, err = setupAgent(ctx, cfg, approver); err != nil {
+						return err
+					}
+					a.MaxInvestigateSteps = 8
+					fmt.Printf("switched to %s\n", cfg.Model)
+				}
+			default:
+				fmt.Printf("unknown command /%s (try /help)\n", fields[0])
+			}
+			continue
+		}
+
 		switch {
 		case line == "":
 			continue
@@ -308,21 +399,29 @@ func chooseModel(in *bufio.Reader, models []string, current string) string {
 
 func shellBanner(model string) {
 	fmt.Printf("\n⬡ Sahayak interactive shell  ·  model: %s\n", model)
-	fmt.Println("  Type a request in plain language. Commands: help · models · exit")
+	fmt.Println("  Plain language to act · type / for commands · @ to reference a tool/app · /help")
 }
 
 func shellHelp() {
 	fmt.Print(`
 Sahayak shell — type a request and press Enter. Examples:
-  list configmaps for acme-web
-  why is acme-web failing
-  what image is acme-web running
-  restart acme-web              (will ask for approval)
+  list configmaps for web-api
+  how is web-api doing
+  restart web-api               (will ask for approval)
 
-Built-in commands:
+Type-ahead (rich prompt on a terminal):
+  /        command palette — Tab to accept, ↑↓ to move, Esc to close
+  @        entity picker — cartridges, namespaces, and learned workloads
+
+Slash commands:
+  /help                 this help          /clear     clear the screen
+  /model | /models      switch the model   /legacy    show routing mode
+  /cartridge <args>     manage cartridges  /learn <args>     self-learning
+  /knowledge <args>     knowledge packs    /memory <args>    long-term memory
+  /exit                 leave the shell
+
+Other:
   ! <cmd>    run a command yourself (risk-gated), e.g. ! kubectl get ns
-  models     list installed models and switch
-  help / ?   this help
-  exit / quit / Ctrl-D   leave the shell
+  exit / quit / Ctrl-D   leave the shell   (set SAHAYAK_PLAIN_PROMPT=1 for a basic prompt)
 `)
 }
