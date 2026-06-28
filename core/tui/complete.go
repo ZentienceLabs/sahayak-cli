@@ -29,6 +29,35 @@ type SlashCommand struct {
 	Desc string
 }
 
+// SlashArg is a subcommand/argument of a slash command, shown when completing args.
+type SlashArg struct {
+	Name string
+	Desc string
+}
+
+// slashArgs maps a command path (no leading slash) to its first-level subcommands, so
+// "/cartridge ins" → install and "/cartridge registry " → add/list. Mirrors the real CLI
+// subcommands the shell dispatches.
+var slashArgs = map[string][]SlashArg{
+	"cartridge": {
+		{"list", "show installed cartridges"},
+		{"search", "search the registry"},
+		{"install", "install by name / file / url"},
+		{"remove", "uninstall a cartridge"},
+		{"registry", "manage registries"},
+		{"trust", "manage publisher keys"},
+		{"keygen", "make a signing keypair"},
+		{"sign", "sign a cartridge file"},
+		{"build", "author a cartridge"},
+		{"where", "show the install dir"},
+	},
+	"cartridge registry": {{"add", "add a registry url/path"}, {"list", "list registries"}},
+	"cartridge trust":    {{"add", "trust a publisher key"}, {"list", "list trusted keys"}},
+	"learn":              {{"suggest", "show learning suggestions"}, {"promote", "promote a learned command"}, {"forget", "clear the learning log"}},
+	"knowledge":          {{"install", "install a .sahayakpack"}, {"list", "list packs"}, {"search", "search packs"}, {"build", "build a pack"}, {"remove", "remove a pack"}},
+	"memory":             {{"add", "add a note"}, {"list", "list notes"}, {"search", "search notes"}, {"forget", "forget a note"}},
+}
+
 // SlashCommands is the palette. The shell dispatches these (they are not sent to the model).
 var SlashCommands = []SlashCommand{
 	{"/help", "show shell help"},
@@ -49,15 +78,44 @@ var SlashCommands = []SlashCommand{
 //   - the line is a "/" command still being named (no space yet) → the slash palette
 //   - the token under the cursor starts with "@" → entity picker (cartridges/ns/apps/env)
 func Complete(before string, src Sources) ([]Suggestion, int) {
-	// Slash palette: only while typing the command name (leading slash, no space yet).
-	if strings.HasPrefix(before, "/") && !strings.Contains(before, " ") {
+	if strings.HasPrefix(before, "/") {
+		// Palette: while still typing the command name (no space yet).
+		if !strings.Contains(before, " ") {
+			var out []Suggestion
+			for _, c := range SlashCommands {
+				if strings.HasPrefix(c.Name, before) {
+					out = append(out, Suggestion{Value: c.Name + " ", Label: c.Name, Desc: c.Desc})
+				}
+			}
+			return out, 0
+		}
+		// Argument completion: complete the subcommand for the current command path.
+		fields := strings.Fields(before)
+		endsSpace := strings.HasSuffix(before, " ")
+		path := []string{strings.TrimPrefix(fields[0], "/")}
+		partial := ""
+		if endsSpace {
+			path = append(path, fields[1:]...)
+		} else {
+			path = append(path, fields[1:len(fields)-1]...)
+			partial = fields[len(fields)-1]
+		}
+		args, ok := slashArgs[strings.Join(path, " ")]
+		if !ok {
+			return nil, 0 // no known args at this level (e.g. a name/value arg)
+		}
+		lp := strings.ToLower(partial)
 		var out []Suggestion
-		for _, c := range SlashCommands {
-			if strings.HasPrefix(c.Name, before) {
-				out = append(out, Suggestion{Value: c.Name + " ", Label: c.Name, Desc: c.Desc})
+		for _, a := range args {
+			if lp == "" || strings.HasPrefix(strings.ToLower(a.Name), lp) {
+				out = append(out, Suggestion{Value: a.Name + " ", Label: a.Name, Desc: a.Desc})
 			}
 		}
-		return out, 0
+		from := len(before)
+		if !endsSpace {
+			from = len(before) - len(partial)
+		}
+		return out, from
 	}
 
 	// Entity picker: find the token under the cursor; if it starts with "@", complete it.
