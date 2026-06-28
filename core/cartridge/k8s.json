@@ -1,0 +1,140 @@
+{
+  "name": "k8s",
+  "applicability": { "command": "kubectl", "args": ["config", "current-context"] },
+  "catalog": [
+    { "intent": "list", "phrases": [
+      "list configmaps for X", "show me the services in X", "get deployments for X",
+      "which pods of X are there", "display all secrets in X", "what ingresses exist for X"
+    ]},
+    { "intent": "searchcfg", "phrases": [
+      "is there a config flag for X", "find an env var related to X",
+      "which configmap key contains X", "is there a setting about X", "what config controls X"
+    ]},
+    { "intent": "image", "phrases": [
+      "what image is X running", "show the image tag for X", "which version is X on"
+    ]},
+    { "intent": "rollout", "phrases": [
+      "rollout status of X", "is X rolled out", "has X finished its rollout"
+    ]},
+    { "intent": "restart", "phrases": [
+      "restart X", "redeploy X", "bounce X", "cycle the pods for X"
+    ]},
+    { "intent": "verifyenv", "phrases": [
+      "is FLAG set in X", "verify FLAG in X", "check the value of FLAG in X"
+    ]},
+    { "intent": "logs", "phrases": [
+      "why is X failing", "show me errors in X logs", "X is crashing", "what is wrong with X"
+    ]},
+    { "intent": "status", "phrases": [
+      "how is X doing", "is X healthy", "health of X", "give me the full picture of X",
+      "what is the overall state of X"
+    ]}
+  ],
+  "templates": [
+    {
+      "intent": "list",
+      "command": "kubectl",
+      "args": ["get", "{resource}", "-A"],
+      "risk": "read-only",
+      "processor": "filter-summarize",
+      "shape": "simple",
+      "slots": [
+        { "name": "resource", "extractor": "enum", "required": true, "values": {
+          "configmap": "configmaps", "configmaps": "configmaps", "cm": "configmaps",
+          "service": "services", "services": "services", "svc": "services",
+          "deployment": "deployments", "deployments": "deployments", "deploy": "deployments",
+          "pod": "pods", "pods": "pods", "po": "pods",
+          "secret": "secrets", "secrets": "secrets",
+          "ingress": "ingress", "ingresses": "ingress", "ing": "ingress",
+          "statefulset": "statefulsets", "statefulsets": "statefulsets", "sts": "statefulsets",
+          "job": "jobs", "jobs": "jobs", "cronjob": "cronjobs", "cronjobs": "cronjobs"
+        }},
+        { "name": "selector", "extractor": "after-preposition", "required": true }
+      ]
+    },
+    {
+      "intent": "searchcfg",
+      "command": "kubectl",
+      "args": ["get", "configmap", "-A", "-o", "json"],
+      "risk": "read-only",
+      "processor": "configmap-search",
+      "shape": "simple",
+      "slots": [ { "name": "keyword", "extractor": "content-keyword", "required": true } ]
+    },
+    {
+      "intent": "image",
+      "command": "kubectl",
+      "args": ["get", "deployments", "-A"],
+      "shape": "resolve-fanout",
+      "slots": [ { "name": "app", "extractor": "hyphenated-token", "required": true } ],
+      "item": {
+        "command": "kubectl",
+        "args": ["get", "deploy/{name}", "-n", "{ns}", "-o", "jsonpath={range .spec.template.spec.containers[*]}{.name}={.image}{\"\\n\"}{end}"],
+        "risk": "read-only",
+        "processor": "raw"
+      }
+    },
+    {
+      "intent": "rollout",
+      "command": "kubectl",
+      "args": ["get", "deployments", "-A"],
+      "shape": "resolve-fanout",
+      "slots": [ { "name": "app", "extractor": "hyphenated-token", "required": true } ],
+      "item": {
+        "command": "kubectl",
+        "args": ["rollout", "status", "deploy/{name}", "-n", "{ns}", "--timeout=10s"],
+        "risk": "read-only",
+        "processor": "raw"
+      }
+    },
+    {
+      "intent": "restart",
+      "command": "kubectl",
+      "args": ["get", "deployments", "-A"],
+      "shape": "resolve-fanout",
+      "slots": [ { "name": "app", "extractor": "hyphenated-token", "required": true } ],
+      "item": {
+        "command": "kubectl",
+        "args": ["rollout", "restart", "deploy/{name}", "-n", "{ns}"],
+        "risk": "mutating",
+        "processor": "raw"
+      }
+    },
+    {
+      "intent": "verifyenv",
+      "command": "kubectl",
+      "args": ["get", "deployments", "-A"],
+      "shape": "resolve-fanout",
+      "slots": [
+        { "name": "app", "extractor": "hyphenated-token", "required": true },
+        { "name": "env_var", "extractor": "upper-snake", "required": true }
+      ],
+      "item": {
+        "command": "kubectl",
+        "args": ["exec", "deploy/{name}", "-n", "{ns}", "--", "printenv", "{env_var}"],
+        "risk": "mutating",
+        "processor": "raw"
+      }
+    },
+    {
+      "intent": "logs",
+      "command": "kubectl",
+      "args": ["get", "deployments", "-A"],
+      "shape": "resolve-fanout",
+      "slots": [ { "name": "app", "extractor": "hyphenated-token", "required": true } ],
+      "item": {
+        "command": "kubectl",
+        "args": ["logs", "deploy/{name}", "-n", "{ns}", "--all-containers", "--since=3h", "--tail=500"],
+        "risk": "read-only",
+        "processor": "error-extract"
+      }
+    },
+    {
+      "intent": "status",
+      "command": "kubectl",
+      "args": ["get", "deployments", "-A"],
+      "shape": "rollup",
+      "slots": [ { "name": "app", "extractor": "hyphenated-token", "required": true } ]
+    }
+  ]
+}

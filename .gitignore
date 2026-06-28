@@ -1,0 +1,33 @@
+# Binaries
+/bin/
+/dist/
+sahayak
+sahayak.exe
+*.exe
+*.test
+*.out
+
+# Embedded model artifacts (fetched at build time / git-lfs)
+assets/models/*.gguf
+assets/llama-server/*
+
+# Built knowledge packs (authored from sources in docs/packs/*.jsonl)
+*.sahayakpack
+
+# Local config & state
+*.db
+*.sqlite
+*.log
+.env
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Go
+/vendor/
+go.work.sum
+
+# The cartridge registry is a SEPARATE repo (ZentienceLabs/sahayak-registry)
+/registry/

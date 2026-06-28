@@ -1,0 +1,99 @@
+{
+  "name": "systemd",
+  "applicability": { "command": "systemctl", "args": ["--version"] },
+  "catalog": [
+    { "intent": "status", "phrases": [
+      "status of the X service", "is the X service running", "show me the X service status",
+      "how is the X daemon", "systemctl status of X"
+    ]},
+    { "intent": "restart", "phrases": [
+      "restart the X service", "restart the X daemon", "bounce the X service",
+      "reload the X service"
+    ]},
+    { "intent": "start", "phrases": [
+      "start the X service", "bring up the X service"
+    ]},
+    { "intent": "stop", "phrases": [
+      "stop the X service", "shut down the X service"
+    ]},
+    { "intent": "logs", "phrases": [
+      "show the journal for the X service", "journal logs for X", "what is in the X service log",
+      "tail the X service logs"
+    ]},
+    { "intent": "enable", "phrases": [
+      "enable the X service at boot", "make the X service start on boot"
+    ]}
+  ],
+  "templates": [
+    {
+      "intent": "status",
+      "command": "systemctl",
+      "args": ["status", "{unit}", "--no-pager"],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        { "name": "unit", "extractor": "after-preposition", "required": true }
+      ]
+    },
+    {
+      "intent": "restart",
+      "command": "systemctl",
+      "args": ["restart", "{unit}"],
+      "risk": "mutating",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        { "name": "unit", "extractor": "after-verb", "required": true,
+          "verbs": ["restart", "bounce", "reload"] }
+      ]
+    },
+    {
+      "intent": "start",
+      "command": "systemctl",
+      "args": ["start", "{unit}"],
+      "risk": "mutating",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        { "name": "unit", "extractor": "after-verb", "required": true,
+          "verbs": ["start", "up"] }
+      ]
+    },
+    {
+      "intent": "stop",
+      "command": "systemctl",
+      "args": ["stop", "{unit}"],
+      "risk": "destructive",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        { "name": "unit", "extractor": "after-verb", "required": true,
+          "verbs": ["stop", "down"] }
+      ]
+    },
+    {
+      "intent": "logs",
+      "command": "journalctl",
+      "args": ["-u", "{unit}", "-n", "200", "--no-pager"],
+      "risk": "read-only",
+      "processor": "error-extract",
+      "shape": "simple",
+      "slots": [
+        { "name": "unit", "extractor": "after-preposition", "required": true }
+      ]
+    },
+    {
+      "intent": "enable",
+      "command": "systemctl",
+      "args": ["enable", "{unit}"],
+      "risk": "mutating",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        { "name": "unit", "extractor": "after-verb", "required": true,
+          "verbs": ["enable"] }
+      ]
+    }
+  ]
+}
