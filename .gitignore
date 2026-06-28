@@ -1,8 +1,8 @@
-# Binaries
+# Binaries (anchored to repo root so they don't match the cmd/sahayak/ source dir)
 /bin/
 /dist/
-sahayak
-sahayak.exe
+/sahayak
+/sahayak.exe
 *.exe
 *.test
 *.out
