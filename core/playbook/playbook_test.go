@@ -36,11 +36,11 @@ func TestMatchRejectsAmbiguousOrDiagnostic(t *testing.T) {
 	// These must NOT fire — they need the adaptive model-driven loop, not a
 	// deterministic single listing.
 	reject := []string{
-		"why did my pod crash in acme-dev",  // pod-level → investigate loop
-		"are there any errors in acme dev",  // no hyphenated app to resolve
+		"why did my pod crash in acme-dev",     // pod-level → investigate loop
+		"are there any errors in acme dev",     // no hyphenated app to resolve
 		"list failing pods across the cluster", // no explicit "for/in <entity>"
 		"show me all namespaces",               // cluster-scoped, noise selector
-		"configmap acme-web",                // no list verb, no preposition
+		"configmap acme-web",                   // no list verb, no preposition
 		"list configmaps in the cluster",       // selector is noise ("cluster")
 		"how is the cluster doing",             // no resource, no app
 	}
@@ -166,10 +166,10 @@ func TestBuildPlanFillsSlots(t *testing.T) {
 func TestBuildPlanDeclinesWhenSlotMissing(t *testing.T) {
 	// A routed kind with no groundable slot must NOT produce a half-blind plan.
 	for _, c := range []struct{ kind, req string }{
-		{"logs", "why is it failing"},                   // no hyphenated app
-		{"list", "show me everything"},                  // no resource, no selector
+		{"logs", "why is it failing"},                // no hyphenated app
+		{"list", "show me everything"},               // no resource, no selector
 		{"verifyenv", "is the flag set in acme-web"}, // no UPPER_SNAKE env var
-		{"searchcfg", "is it in there"},                 // no content keyword
+		{"searchcfg", "is it in there"},              // no content keyword
 	} {
 		if pl, ok := BuildPlan(c.kind, c.req); ok {
 			t.Errorf("BuildPlan(%q, %q) fired unexpectedly: %+v", c.kind, c.req, pl)

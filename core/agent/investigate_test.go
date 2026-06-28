@@ -151,7 +151,7 @@ func TestCondenseFiltersLargeOutput(t *testing.T) {
 	for i := 0; i < 40; i++ {
 		b.WriteString("other-ns-x     Active\n")
 	}
-	b.WriteString("acme-dev    Active\n")      // keyword match
+	b.WriteString("acme-dev    Active\n")         // keyword match
 	b.WriteString("broken-ns      Terminating\n") // abnormal
 	res := exec.Result{Command: "kubectl", ExitCode: 0, Stdout: b.String()}
 
