@@ -16,6 +16,7 @@ type selectModel struct {
 	cursor  int
 	current string
 	chosen  bool
+	done    bool
 }
 
 func (m selectModel) Init() tea.Cmd { return nil }
@@ -27,9 +28,10 @@ func (m selectModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 	switch k.Type {
 	case tea.KeyCtrlC, tea.KeyEsc, tea.KeyCtrlD:
+		m.done = true
 		return m, tea.Quit
 	case tea.KeyEnter:
-		m.chosen = true
+		m.chosen, m.done = true, true
 		return m, tea.Quit
 	case tea.KeyUp:
 		m.cursor = (m.cursor - 1 + len(m.options)) % len(m.options)
@@ -47,6 +49,9 @@ func (m selectModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m selectModel) View() string {
+	if m.done {
+		return "" // leave no list residue in scrollback; the shell prints the result
+	}
 	var b strings.Builder
 	b.WriteString(m.title + "\n")
 	for i, o := range m.options {

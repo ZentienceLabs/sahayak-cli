@@ -42,6 +42,7 @@ type promptModel struct {
 	sel         int
 	show        bool
 	eof         bool
+	done        bool // submitted/exited: render a clean one-line frame, no box/popup
 
 	hist    []string
 	histPos int
@@ -154,12 +155,14 @@ func (m promptModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.Type {
 		case tea.KeyCtrlD:
-			m.eof = true
+			m.eof, m.done = true, true
 			return m, tea.Quit
 		case tea.KeyCtrlC:
 			m.ta.SetValue("")
+			m.done = true
 			return m, tea.Quit
-		case tea.KeyEnter: // submit (newline is Ctrl-J)
+		case tea.KeyEnter: // submit (Tab accepts a suggestion; newline is Ctrl-J)
+			m.done = true
 			return m, tea.Quit
 		case tea.KeyTab:
 			if m.show {
@@ -223,6 +226,15 @@ func (m promptModel) renderPopup() string {
 }
 
 func (m promptModel) View() string {
+	// On submit/exit, collapse to a single plain line so the scrollback keeps just
+	// "> <command>" — no leftover box outline, popup, or status bar in history.
+	if m.done {
+		v := m.ta.Value()
+		if v == "" {
+			return ""
+		}
+		return m.ta.Prompt + strings.ReplaceAll(v, "\n", "\n"+m.ta.Prompt)
+	}
 	var b strings.Builder
 	if m.show {
 		b.WriteString(m.renderPopup() + "\n")
