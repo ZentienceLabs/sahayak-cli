@@ -278,7 +278,12 @@ func runShell(ctx context.Context, args []string) error {
 
 		var line string
 		if rich {
-			l, eof, perr := tui.Prompt("\033[36msahayak>\033[0m ", shellSources(a), history)
+			routing := "cartridge engine"
+			if a.Cartridges == nil {
+				routing = "legacy routing"
+			}
+			status := fmt.Sprintf("model: %s · %s", cfg.Model, routing)
+			l, eof, perr := tui.Prompt("> ", shellSources(a), history, status)
 			if perr != nil {
 				fmt.Fprintln(os.Stderr, "(rich prompt unavailable, falling back to plain input)")
 				rich = false

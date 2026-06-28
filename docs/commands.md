@@ -65,7 +65,10 @@ The shell has a Claude-Code / Gemini-CLI-style editor with live completion:
   `/learn`, `/knowledge`, `/memory`, `/clear`, `/legacy`, `/exit`.
 - **`@`** opens the **entity picker** — installed cartridges, plus the namespaces and
   workloads the env cache has learned (e.g. `@web-api` → inserts `web-api`).
-- Keys: **Tab** accept · **↑/↓** move · **Esc** close popup · **Enter** submit · **Ctrl-D** exit.
+- A bordered, **multi-line** editor with a status line beneath it.
+- Keys: **Enter** submit · **Ctrl-J** newline (Shift-Enter where the terminal supports it) ·
+  **←/→/Home/End** + word-motion move the cursor · **↑/↓** move lines / the popup ·
+  **Ctrl-P/Ctrl-N** history · **Tab** accept · **Esc** close popup · **Ctrl-D** exit · **Ctrl-C** clear.
 
 Slash commands take the same args as the top-level commands, e.g. `/cartridge install k8s`,
 `/learn suggest`, `/memory add "…"`. Set `SAHAYAK_PLAIN_PROMPT=1` for a basic readline prompt
