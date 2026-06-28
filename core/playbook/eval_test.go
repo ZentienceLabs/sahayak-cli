@@ -50,12 +50,12 @@ var routingCorpus = []struct {
 	// --- must NOT fire (hand off to the adaptive loop / approval) ---
 	{"why did my pod crash in acme-dev", "", ""},                  // pod-level
 	{"are there any errors in acme dev", "", ""},                  // no hyphenated app
-	{"list failing pods across the cluster", "", ""},                 // no entity
-	{"show me all namespaces", "", ""},                               // cluster-scoped
+	{"list failing pods across the cluster", "", ""},              // no entity
+	{"show me all namespaces", "", ""},                            // cluster-scoped
 	{"configmap acme-web", "", ""},                                // no verb
-	{"list configmaps in the cluster", "", ""},                       // noise selector
+	{"list configmaps in the cluster", "", ""},                    // noise selector
 	{"set CONSOLE_WORKFLOW_REDESIGN to true in acme-web", "", ""}, // assignment, not read
-	{"how is the cluster doing", "", ""},                             // vague
+	{"how is the cluster doing", "", ""},                          // vague
 }
 
 func TestRoutingCorpus(t *testing.T) {

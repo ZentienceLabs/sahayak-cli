@@ -38,8 +38,8 @@ func TestMatchCompositeDeclines(t *testing.T) {
 		"why is acme-web failing",        // atomic logs
 		"what image is acme-web running", // atomic image
 		"list configmaps for acme-web",   // atomic list
-		"how is the cluster doing",          // no hyphenated app to ground
-		"summarize the situation",           // no app
+		"how is the cluster doing",       // no hyphenated app to ground
+		"summarize the situation",        // no app
 		"restart acme-web",               // atomic restart
 	}
 	for _, r := range reject {
