@@ -6,45 +6,39 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func TestSanitizePaste(t *testing.T) {
-	cases := map[string]string{
-		"hello":               "hello",
-		"a\nb":                "a b",
-		"a\r\nb\tc":           "a b c",
-		"line1\nline2\nline3": "line1 line2 line3",
-		"trailing\n":          "trailing",
-	}
-	for in, want := range cases {
-		if got := sanitizePaste(in); got != want {
-			t.Errorf("sanitizePaste(%q) = %q, want %q", in, got, want)
-		}
-	}
-}
-
 func TestHistoryNavigation(t *testing.T) {
-	m := newPromptModel("> ", Sources{}, []string{"first cmd", "second cmd"})
+	m := newPromptModel("> ", Sources{}, []string{"first cmd", "second cmd"}, "")
 	if m.histPos != 2 {
 		t.Fatalf("histPos should start at len(hist)=2, got %d", m.histPos)
 	}
-	// type a draft
-	m.ti.SetValue("draft in progress")
+	m.ta.SetValue("draft in progress")
 
 	m.histPrev() // → newest history entry, draft stashed
-	if m.ti.Value() != "second cmd" {
-		t.Fatalf("histPrev should recall 'second cmd', got %q", m.ti.Value())
+	if m.ta.Value() != "second cmd" {
+		t.Fatalf("histPrev should recall 'second cmd', got %q", m.ta.Value())
 	}
 	m.histPrev() // → older
-	if m.ti.Value() != "first cmd" {
-		t.Fatalf("histPrev should recall 'first cmd', got %q", m.ti.Value())
+	if m.ta.Value() != "first cmd" {
+		t.Fatalf("histPrev should recall 'first cmd', got %q", m.ta.Value())
 	}
 	m.histPrev() // → clamp at oldest
-	if m.ti.Value() != "first cmd" {
-		t.Errorf("histPrev past oldest should stay, got %q", m.ti.Value())
+	if m.ta.Value() != "first cmd" {
+		t.Errorf("histPrev past oldest should stay, got %q", m.ta.Value())
 	}
 	m.histNext() // → 'second cmd'
 	m.histNext() // → back to the stashed draft
-	if m.ti.Value() != "draft in progress" {
-		t.Errorf("histNext back to live should restore the draft, got %q", m.ti.Value())
+	if m.ta.Value() != "draft in progress" {
+		t.Errorf("histNext back to live should restore the draft, got %q", m.ta.Value())
+	}
+}
+
+func TestMultilineSkipsCompletion(t *testing.T) {
+	// On a multi-line value the "/"/"@" popup is suppressed (we complete single-line only).
+	m := newPromptModel("> ", Sources{Cartridges: []string{"k8s"}}, nil, "")
+	m.ta.SetValue("line one\n@k")
+	m.refresh()
+	if m.show {
+		t.Error("completion should be suppressed for multi-line input")
 	}
 }
 
