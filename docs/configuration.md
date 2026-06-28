@@ -9,7 +9,10 @@ Sahayak is configured by **environment variables** (persist across runs) and **f
 |---|---|---|
 | `SAHAYAK_MODEL` | `qwen3:4b-instruct` | Model tag the brain uses (e.g. `qwen2.5-coder:7b`). |
 | `SAHAYAK_ENDPOINT` | `http://127.0.0.1:11434` | Ollama endpoint. |
-| `SAHAYAK_ENGINE` | `ollama` | Brain: `ollama` (dev) or `embedded` (appliance). |
+| `SAHAYAK_ENGINE` | `ollama` | Brain: `ollama` (dev), `embedded` (appliance), or `cloud` (hosted — **not sovereign**, see below). |
+| `SAHAYAK_CLOUD_PROVIDER` | `anthropic` | Backend for the `cloud` engine. Today: `anthropic` (Claude). |
+| `ANTHROPIC_API_KEY` | _(none)_ | API key for the `cloud` engine when the provider is `anthropic`. |
+| `ANTHROPIC_BASE_URL` | `https://api.anthropic.com` | Override the Claude API root (e.g. a gateway). |
 | `SAHAYAK_EMBEDDER` | `hash:256` | Embedder for routing + RAG. `hash:<dim>` (offline, lexical) or `ollama:<model>` (true semantics, e.g. `ollama:nomic-embed-text`). |
 | `SAHAYAK_CATALOG` | _(none)_ | Path to an extra router catalog file, layered on the built-ins (legacy router path). |
 | `SAHAYAK_LEGACY` | _(unset)_ | `1` = use the legacy regex/router/classifier pipeline instead of the default cartridge engine (for comparison). |
@@ -24,11 +27,34 @@ export SAHAYAK_EMBEDDER=ollama:nomic-embed-text
 This switches routing/RAG from lexical (`hash`) to true semantic matching — measured ~11×
 phrasing coverage on hard requests. Needs `ollama pull nomic-embed-text`.
 
+### The `cloud` engine (hosted models — ⚠️ not sovereign)
+Sahayak's whole point is staying on your machine: `ollama` (dev) and `embedded` (the sealed
+appliance) keep every request local. The **`cloud`** engine is the opposite trade — an
+explicit opt-in to a frontier hosted model when you want maximum reasoning during
+development and sovereignty isn't the constraint for that session.
+
+```sh
+export SAHAYAK_ENGINE=cloud            # the hosted lane (off by default)
+export SAHAYAK_CLOUD_PROVIDER=anthropic # default; Claude
+export ANTHROPIC_API_KEY=sk-ant-...    # required
+export SAHAYAK_MODEL=claude-opus-4-8   # any Claude model id
+sahayak doctor                          # confirms the key + model are reachable
+```
+
+**What "not sovereign" means here:** with `cloud`, your prompts — plus the command output
+the agent loop feeds back and the env facts it has learned — are sent over the network to
+the hosted provider, where they may be processed under that provider's terms. Do **not**
+use it on an air-gapped host or where data must not leave the machine; use `ollama` or
+`embedded` for those. The model still never authors a command string or decides risk —
+deterministic Go does — and the human approval gate is unchanged. The cloud engine is for
+chat/inference only; semantic routing/RAG embeddings still come from `SAHAYAK_EMBEDDER`
+(keep that on `hash` or a local Ollama embedder to avoid a second network dependency).
+
 ## Flags (apply to `ask` and `doctor`)
 
 | Flag | Default | Meaning |
 |---|---|---|
-| `--engine <name>` | `ollama` | `ollama` or `embedded` (= `SAHAYAK_ENGINE`). |
+| `--engine <name>` | `ollama` | `ollama`, `embedded`, or `cloud` (= `SAHAYAK_ENGINE`). |
 | `--endpoint <url>` | `http://127.0.0.1:11434` | Inference endpoint (= `SAHAYAK_ENDPOINT`). |
 | `--model <tag>` | `qwen3:4b-instruct` | Model to use (= `SAHAYAK_MODEL`). |
 

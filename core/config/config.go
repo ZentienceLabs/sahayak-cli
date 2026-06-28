@@ -13,6 +13,12 @@ const (
 	EngineOllama Engine = "ollama"
 	// EngineEmbedded talks to the bundled llama-server (Phase 6).
 	EngineEmbedded Engine = "embedded"
+	// EngineCloud talks to an online (hosted) model — the optional, NON-SOVEREIGN
+	// "power lane". It leaves the host and needs an API key; it is never the default.
+	// The backend is chosen by SAHAYAK_CLOUD_PROVIDER (default "anthropic"/Claude),
+	// so other hosted providers can slot in without a new engine. The air-gapped
+	// story stays on Ollama/Embedded.
+	EngineCloud Engine = "cloud"
 )
 
 // Config holds resolved settings for a run.
@@ -24,6 +30,9 @@ type Config struct {
 	// Embedder selects the embedding backend for knowledge/memory. Forms:
 	// "hash" / "hash:256" (offline default) or "ollama:nomic-embed-text".
 	Embedder string
+	// CloudProvider picks the hosted backend when Engine is "cloud" (e.g.
+	// "anthropic"). Default "anthropic" (Claude). Ignored for local engines.
+	CloudProvider string
 }
 
 // Defaults returns baseline settings, overlaying any SAHAYAK_* environment vars.
@@ -38,6 +47,7 @@ func Defaults() Config {
 		Model:           "qwen3:4b-instruct",
 		AutoRunReadOnly: true,
 		Embedder:        "hash:256",
+		CloudProvider:   "anthropic",
 	}
 	if v := os.Getenv("SAHAYAK_ENDPOINT"); v != "" {
 		c.Endpoint = v
@@ -50,6 +60,9 @@ func Defaults() Config {
 	}
 	if v := os.Getenv("SAHAYAK_EMBEDDER"); v != "" {
 		c.Embedder = v
+	}
+	if v := os.Getenv("SAHAYAK_CLOUD_PROVIDER"); v != "" {
+		c.CloudProvider = v
 	}
 	return c
 }

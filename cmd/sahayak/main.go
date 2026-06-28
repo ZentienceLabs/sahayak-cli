@@ -154,9 +154,12 @@ func runDoctor(ctx context.Context, args []string) error {
 	provider := newProvider(cfg)
 	if err := provider.Health(ctx); err != nil {
 		fmt.Printf("  backend:  ✗ %v\n", err)
-		if cfg.Engine == config.EngineOllama {
+		switch cfg.Engine {
+		case config.EngineOllama:
 			fmt.Printf("\nNot ready. Start Ollama (`ollama serve`) and pull a model (`ollama pull %s`).\n", cfg.Model)
-		} else {
+		case config.EngineCloud:
+			fmt.Printf("\nNot ready. The cloud engine (%s) calls a hosted API — set ANTHROPIC_API_KEY and SAHAYAK_MODEL=claude-opus-4-8.\nNote: this engine is NOT sovereign — requests leave the host. Use ollama/embedded for the air-gapped appliance.\n", cfg.CloudProvider)
+		default:
 			fmt.Printf("\nNot ready. Bundle the embedded engine, or set SAHAYAK_LLAMA_SERVER + SAHAYAK_MODEL_PATH for dev.\n")
 		}
 		return nil
@@ -172,8 +175,24 @@ func newProvider(cfg config.Config) llm.Provider {
 	switch cfg.Engine {
 	case config.EngineEmbedded:
 		return llm.NewEmbedded(cfg.Model)
+	case config.EngineCloud:
+		return newCloudProvider(cfg)
 	default:
 		return llm.NewOllama(cfg.Endpoint, cfg.Model)
+	}
+}
+
+// newCloudProvider picks the hosted backend for the (non-sovereign) cloud engine.
+// Today only Anthropic/Claude is wired; the switch is where other hosted providers
+// plug in, selected by SAHAYAK_CLOUD_PROVIDER.
+func newCloudProvider(cfg config.Config) llm.Provider {
+	switch cfg.CloudProvider {
+	case "", "anthropic", "claude":
+		return llm.NewAnthropic(cfg.Model)
+	default:
+		// Unknown selector: fall back to Anthropic so the cloud lane still works;
+		// doctor/health will surface any misconfiguration clearly.
+		return llm.NewAnthropic(cfg.Model)
 	}
 }
 
