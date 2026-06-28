@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest an improvement or a new capability
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / use case
+      description: What are you trying to do that's hard or impossible today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you like to see? (If it's tool support, consider a cartridge — see docs/cartridges.md.)
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Engine/routing, Cartridge/registry, Self-learning, CLI/UX, Embedded appliance, Docs, Other]
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

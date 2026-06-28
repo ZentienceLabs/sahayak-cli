@@ -12,6 +12,7 @@ air-gappable, MIT.
 | [Commands](./commands.md) | Full reference for every command and option |
 | [Cartridges](./cartridges.md) | Install / build / publish / sign tool cartridges + the registry |
 | [Self-learning](./self-learning.md) | How Sahayak learns from outcomes and proposes improvements |
+| [Embedded appliance](./embedded-appliance.md) | Sealed, air-gapped build: bundling `llama-server` + a GGUF model |
 
 ## 60-second start
 
