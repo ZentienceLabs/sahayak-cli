@@ -29,7 +29,7 @@ type Config struct {
 // Defaults returns baseline settings, overlaying JSON config and ENV vars.
 func Defaults() Config {
 	c := Config{
-		Mode:           ModeSovereign,
+		Mode:            ModeSovereign,
 		Endpoint:        "http://127.0.0.1:11434",
 		Model:           "qwen3:4b-instruct",
 		AutoRunReadOnly: true,

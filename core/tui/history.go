@@ -98,7 +98,7 @@ func (m historyModel) View() string {
 	}
 	var b strings.Builder
 	b.WriteString(m.ti.View() + "':\n")
-	
+
 	max := 10
 	if len(m.filtered) < max {
 		max = len(m.filtered)

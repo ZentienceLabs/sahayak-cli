@@ -55,7 +55,7 @@ func runConfig(_ context.Context, args []string) error {
 
 func runInteractiveConfig(cfg config.Config) error {
 	var modeStr string = string(cfg.Mode)
-	
+
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
@@ -67,17 +67,17 @@ func runInteractiveConfig(cfg config.Config) error {
 					huh.NewOption("Cloud (Hosted APIs)", string(config.ModeCloud)),
 				).
 				Value(&modeStr),
-				
+
 			huh.NewInput().
 				Title("LLM Endpoint").
 				Description("The URL of the inference server (e.g. http://127.0.0.1:11434)").
 				Value(&cfg.Endpoint),
-				
+
 			huh.NewInput().
 				Title("Default Model").
 				Description("The primary reasoning model").
 				Value(&cfg.Model),
-				
+
 			huh.NewInput().
 				Title("Embedder").
 				Description("The embedding model (e.g. hash:256 or ollama:nomic-embed-text)").
@@ -91,11 +91,11 @@ func runInteractiveConfig(cfg config.Config) error {
 	}
 
 	cfg.Mode = config.Mode(modeStr)
-	
+
 	if err := config.Save(cfg); err != nil {
 		return fmt.Errorf("failed to save config: %w", err)
 	}
-	
+
 	fmt.Println("- Configuration saved successfully!")
 	return nil
 }

@@ -13,8 +13,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/glamour"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/mattn/go-isatty"
 )
 
@@ -136,7 +136,7 @@ func (p *Printer) Output(s string) {
 // Conclusion prints the final answer in a bordered box with markdown formatting.
 func (p *Printer) Conclusion(s string) {
 	title := sBrand.Render("Conclusion")
-	
+
 	outStr := strings.TrimSpace(s)
 	if p.tty {
 		// Render markdown for TTY
