@@ -1,0 +1,100 @@
+{
+  "name": "linux-net",
+  "applicability": {
+    "command": "netstat",
+    "args": [
+      "--version"
+    ]
+  },
+  "catalog": [
+    {
+      "intent": "port",
+      "phrases": [
+        "who is listening on port X",
+        "check port X",
+        "what process is on port X"
+      ]
+    },
+    {
+      "intent": "ping",
+      "phrases": [
+        "ping X",
+        "can I reach X",
+        "is host X reachable"
+      ]
+    },
+    {
+      "intent": "dig",
+      "phrases": [
+        "resolve domain X",
+        "dig X",
+        "what is the ip for X"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "intent": "port",
+      "command": "lsof",
+      "args": [
+        "-i",
+        ":{target}"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "target",
+          "extractor": "after-preposition",
+          "required": true
+        }
+      ]
+    },
+    {
+      "intent": "ping",
+      "command": "ping",
+      "args": [
+        "-c",
+        "4",
+        "{target}"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "target",
+          "extractor": "after-verb",
+          "verbs": [
+            "ping",
+            "reach"
+          ],
+          "required": true
+        }
+      ]
+    },
+    {
+      "intent": "dig",
+      "command": "dig",
+      "args": [
+        "+short",
+        "{target}"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "target",
+          "extractor": "after-verb",
+          "verbs": [
+            "resolve",
+            "dig"
+          ],
+          "required": true
+        }
+      ]
+    }
+  ]
+}

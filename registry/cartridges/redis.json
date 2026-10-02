@@ -1,0 +1,70 @@
+{
+  "name": "redis",
+  "applicability": {
+    "command": "redis-cli",
+    "args": [
+      "--version"
+    ]
+  },
+  "catalog": [
+    {
+      "intent": "ping",
+      "phrases": [
+        "ping the redis server",
+        "is redis up",
+        "check if redis is alive"
+      ]
+    },
+    {
+      "intent": "info",
+      "phrases": [
+        "show redis info",
+        "redis memory stats",
+        "how is the redis server doing"
+      ]
+    },
+    {
+      "intent": "flushall",
+      "phrases": [
+        "clear the redis cache",
+        "flush all redis data",
+        "empty the redis database"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "intent": "ping",
+      "command": "redis-cli",
+      "args": [
+        "ping"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    },
+    {
+      "intent": "info",
+      "command": "redis-cli",
+      "args": [
+        "info"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    },
+    {
+      "intent": "flushall",
+      "command": "redis-cli",
+      "args": [
+        "flushall"
+      ],
+      "risk": "destructive",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    }
+  ]
+}

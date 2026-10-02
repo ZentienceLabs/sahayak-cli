@@ -1,0 +1,139 @@
+{
+  "name": "docker",
+  "applicability": {
+    "command": "docker",
+    "args": [
+      "--version"
+    ]
+  },
+  "catalog": [
+    {
+      "intent": "logs",
+      "phrases": [
+        "show logs for the X container",
+        "what are the logs for X docker container",
+        "tail X container logs"
+      ]
+    },
+    {
+      "intent": "restart",
+      "phrases": [
+        "restart the X container",
+        "bounce the X docker container"
+      ]
+    },
+    {
+      "intent": "stop",
+      "phrases": [
+        "stop the X container",
+        "kill the X docker container"
+      ]
+    },
+    {
+      "intent": "ps",
+      "phrases": [
+        "list running containers",
+        "show docker containers",
+        "docker ps"
+      ]
+    },
+    {
+      "intent": "prune",
+      "phrases": [
+        "clean up unused docker images",
+        "prune docker system",
+        "free up docker space"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "intent": "logs",
+      "command": "docker",
+      "args": [
+        "logs",
+        "--tail",
+        "100",
+        "{container}"
+      ],
+      "risk": "read-only",
+      "processor": "error-extract",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "container",
+          "extractor": "after-preposition",
+          "required": true
+        }
+      ]
+    },
+    {
+      "intent": "restart",
+      "command": "docker",
+      "args": [
+        "restart",
+        "{container}"
+      ],
+      "risk": "mutating",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "container",
+          "extractor": "after-verb",
+          "required": true,
+          "verbs": [
+            "restart",
+            "bounce"
+          ]
+        }
+      ]
+    },
+    {
+      "intent": "stop",
+      "command": "docker",
+      "args": [
+        "stop",
+        "{container}"
+      ],
+      "risk": "destructive",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "container",
+          "extractor": "after-verb",
+          "required": true,
+          "verbs": [
+            "stop",
+            "kill"
+          ]
+        }
+      ]
+    },
+    {
+      "intent": "ps",
+      "command": "docker",
+      "args": [
+        "ps"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    },
+    {
+      "intent": "prune",
+      "command": "docker",
+      "args": [
+        "system",
+        "prune",
+        "-f"
+      ],
+      "risk": "destructive",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    }
+  ]
+}

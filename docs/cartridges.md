@@ -26,6 +26,14 @@ sahayak cartridge search ""            # list everything; or: search redis
 sahayak cartridge install k8s          # downloads → verifies checksum + signature → installs
 ```
 
+### 📚 The Official Catalog
+You can search the registry via CLI or install these official cartridges right away:
+
+| Cartridge | Description | Install Command |
+|-----------|-------------|-----------------|
+| **k8s** | Kubernetes cluster diagnosis, pod logs, and pod restarts. | sahayak cartridge install k8s |
+| **systemd** | Linux service management, journalctl logs, and daemon troubleshooting. | sahayak cartridge install systemd |
+
 On install Sahayak prints the commands the cartridge can run and their risk tiers — review
 them before trusting it. Add `SAHAYAK_REQUIRE_SIGNED=1` to refuse unsigned cartridges.
 

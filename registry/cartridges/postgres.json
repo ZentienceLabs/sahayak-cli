@@ -1,0 +1,58 @@
+{
+  "name": "postgres",
+  "applicability": {
+    "command": "psql",
+    "args": [
+      "--version"
+    ]
+  },
+  "catalog": [
+    {
+      "intent": "activity",
+      "phrases": [
+        "show active db connections",
+        "postgres activity",
+        "what is running in postgres"
+      ]
+    },
+    {
+      "intent": "size",
+      "phrases": [
+        "size of database X",
+        "how big is db X"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "intent": "activity",
+      "command": "psql",
+      "args": [
+        "-c",
+        "SELECT datname, usename, state, query FROM pg_stat_activity WHERE state != 'idle';"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    },
+    {
+      "intent": "size",
+      "command": "psql",
+      "args": [
+        "-c",
+        "SELECT pg_size_pretty(pg_database_size('{db}'));"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "db",
+          "extractor": "after-preposition",
+          "required": true
+        }
+      ]
+    }
+  ]
+}
