@@ -1,3 +1,9 @@
+---
+layout: default
+title: Home
+nav_order: 1
+---
+
 # Sahayak Documentation
 
 Sovereign AI DevOps CLI — plain language → inspected, approved commands. CPU-only,

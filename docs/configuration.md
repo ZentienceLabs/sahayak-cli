@@ -1,3 +1,9 @@
+---
+layout: default
+title: Configuration
+nav_order: 3
+---
+
 # Configuration
 
 Sahayak is configured by **environment variables** (persist across runs) and **flags**

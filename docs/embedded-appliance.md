@@ -1,3 +1,9 @@
+---
+layout: default
+title: Embedded Appliance
+nav_order: 7
+---
+
 # Embedded Appliance (sealed, air-gapped)
 
 The default brain is Ollama (a separate daemon). The **embedded** engine instead runs a

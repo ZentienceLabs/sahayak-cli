@@ -1,3 +1,9 @@
+---
+layout: default
+title: Self-Learning Engine
+nav_order: 8
+---
+
 # Self-learning
 
 Sahayak gets better with use — **safely**. It records what happened, judged by
