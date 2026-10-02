@@ -1,0 +1,61 @@
+{
+  "name": "python",
+  "applicability": {
+    "command": "python",
+    "args": [
+      "--version"
+    ]
+  },
+  "catalog": [
+    {
+      "intent": "freeze",
+      "phrases": [
+        "list installed python packages",
+        "pip freeze",
+        "show pip dependencies"
+      ]
+    },
+    {
+      "intent": "uvicorn",
+      "phrases": [
+        "start uvicorn for X",
+        "run fastAPI app X"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "intent": "freeze",
+      "command": "pip",
+      "args": [
+        "freeze"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    },
+    {
+      "intent": "uvicorn",
+      "command": "uvicorn",
+      "args": [
+        "{app}:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload"
+      ],
+      "risk": "mutating",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "app",
+          "extractor": "after-preposition",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

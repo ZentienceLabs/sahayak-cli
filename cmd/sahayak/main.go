@@ -58,6 +58,8 @@ func main() {
 		err = runLearn(ctx, args)
 	case "memory", "mem":
 		err = runMemory(ctx, args)
+	case "config":
+		err = runConfig(ctx, args)
 	case "doctor":
 		err = runDoctor(ctx, args)
 	case "version", "--version", "-v":
@@ -212,6 +214,7 @@ Usage:
   sahayak learn <cmd>                   view and promote learned commands
   sahayak knowledge <cmd>               manage offline knowledge packs (RAG)
   sahayak memory <cmd>                  add/list/search/forget long-term memory
+  sahayak config <cmd>                  view or set global configuration
   sahayak doctor                        check backend connectivity & config
   sahayak version                       print build info
   sahayak help                          show this help

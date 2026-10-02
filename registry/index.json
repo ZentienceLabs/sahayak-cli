@@ -80,6 +80,15 @@
       "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/git.json",
       "sha256": "ed6aca4ca85f603454ed9c153dc85036a9dc860f555c3de265bf1fc80c0ecae2",
       "signature": "TBD"
+    },
+    {
+      "name": "python",
+      "version": "1.0.0",
+      "tool": "python",
+      "description": "Python & FastAPI: pip freeze, uvicorn server",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/python.json",
+      "sha256": "5d7b3f49fbada0ac75e1db5f160826a3456200fbcbf969258e68934eae0eb97a",
+      "signature": "TBD"
     }
   ]
 }
