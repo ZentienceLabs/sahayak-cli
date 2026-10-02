@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/glamour"
 	"github.com/mattn/go-isatty"
 )
 
