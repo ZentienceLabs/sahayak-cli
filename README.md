@@ -1,74 +1,95 @@
-# Sahayak (सहायक — "helper")
+# Sahayak (सहायक / "helper")
 
 > **Sahayak is a sovereign, air-gapped AI command-line assistant for DevOps and Sysadmins.**
-> It translates your plain-language requests into verified, safe operational commands.
-> Unlike typical AI agents that unpredictably author commands on the fly, Sahayak uses a strict **"Model Understands, Go Acts, Human Approves"** architecture to guarantee safety, running entirely on infrastructure you control (CPU-only, no cloud dependency).
+> Tell it what's broken in plain English. It diagnoses the issue and gives you verified, safe operational commands to fix it.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
-## The Core Philosophy: Safety through Determinism
+## The Ops Experience
 
-A small local model **can't** reliably author complex operational commands without making dangerous mistakes. Sahayak solves this by dividing the labor:
-1. **The LLM understands:** It interprets your natural language, identifies the intent, and extracts the parameters (slots) like namespaces or app names.
-2. **Go acts:** It takes the intent and slots, deterministically assembles the command from a pre-authored template (a "cartridge"), classifies the risk, and executes it.
-3. **The human approves:** You write the cartridges and approve any mutating commands before they run.
-
-## Cartridges: Tool Support as Data
-
-Sahayak is tool-agnostic. You teach it how to use tools (like Kubernetes, systemd, or Redis) by installing **Cartridges**. Cartridges are data files containing curated knowledge (RAG), a catalog of phrasings, and command templates.
+No more hunting through StackOverflow at 3:00 AM or worrying about an AI agent deleting production. 
 
 ```sh
-# Add the official registry, search, and install tools
-sahayak cartridge registry add https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/index.json
-sahayak cartridge install k8s
+$ sahayak ask "why is the web-api pod crashing in the frontend namespace?"
+
+🧠 Diagnosing... (Local CPU Model)
+
+The pod is OOMKilled (Out of Memory). 
+I have prepared the following safe command to inspect the previous logs:
+
+> kubectl logs web-api-7b89d-xt4p -n frontend --previous | grep -i "memory"
+
+[Execute]  [Edit]  [Cancel]
 ```
 
-## Quick Start
+Unlike typical AI agents that hallucinate dangerous commands on the fly, Sahayak uses a strict **"Human Approves"** architecture. It runs 100% locally on your machine (no cloud required, no data leaks) and only executes pre-approved, safe command templates.
 
+---
+
+## 🚀 Quick Start for Users
+
+### 1. Install Sahayak
+Download the binary via Go:
 ```sh
 go install github.com/ZentienceLabs/sahayak-cli/cmd/sahayak@latest
-
-# Start your local model (e.g. Ollama)
-ollama pull qwen3:4b-instruct       # default brain
-ollama pull nomic-embed-text        # semantic routing
-
-# Run Sahayak
-sahayak doctor                                  # check backend + config
-sahayak ask "how is web-api doing"              # composed health rollup
 ```
 
-## Documentation Guide
-
-Sahayak's documentation is divided into practical usage guides (in `docs/`) and core architecture references.
-
-### 📚 Getting Started & Usage Guides
-- **[Installation Guide](./docs/installation.md)**: How to set up Sahayak, build from source, and configure local model backends (Ollama or embedded).
-- **[Configuration Guide](./docs/configuration.md)**: Detailed reference for environment variables, model tuning, and CLI setup.
-- **[Commands & Options](./docs/commands.md)**: Comprehensive reference for all CLI commands, arguments, and interactive shell features.
-- **[Cartridges Guide](./docs/cartridges.md)**: How to install, build, sign, and publish your own tool plugins to the registry.
-- **[Self-Learning](./docs/self-learning.md)**: How Sahayak safely observes your terminal commands to suggest new templates without mutating its own behavior.
-- **[Ops Teams Guide](./docs/ops-teams.md)**: Best practices for deploying Sahayak across an engineering team, sharing cartridges, and enforcing security.
-- **[Embedded Appliance](./docs/embedded-appliance.md)**: Running Sahayak fully standalone with an embedded LLM.
-
-### 🏗️ Architecture & Core Concepts
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)**: Explains the strict "Model Understands, Go Acts" division of labor and why Sahayak avoids unbounded AI agents.
-- **[CARTRIDGE-ARCHITECTURE.md](./CARTRIDGE-ARCHITECTURE.md)**: Details the design of tool plugins, peer routing, and the data-driven engine.
-- **[RUNBOOK.md](./RUNBOOK.md)**: Operational usage, playbooks, and interactive shell behaviors.
-- **[project.md](./project.md)**: Product vision, roadmap, and design philosophy.
-- **[COVERAGE.md](./COVERAGE.md)**: The current operational coverage checklist.
-
-## Develop
-
+### 2. Start the Local AI
+Sahayak uses [Ollama](https://ollama.com/) under the hood to run models securely on your local hardware:
 ```sh
-make build   # ./bin/sahayak (CGO-free; cross-compiles to linux/darwin/windows × amd64/arm64)
-make test    # 16 tested packages
-make vet && make fmt
+ollama pull qwen3:4b-instruct       # The brain (CPU-friendly)
+ollama pull nomic-embed-text        # Semantic routing
 ```
 
-> Two release-time assets aren't in the repo (multi-GB, per-platform): the prebuilt
-> `llama-server` binary and the embedded model GGUF. The embedded engine works the moment
-> they're in `assets/` (or via `SAHAYAK_LLAMA_SERVER` / `SAHAYAK_MODEL_PATH`); until then a
-> clear error points you at Ollama. Embedded weights ship **Apache-2.0 / MIT only**.
+### 3. Ask a Question
+Check that everything is wired up, then start troubleshooting!
+```sh
+sahayak doctor
+sahayak ask "how is my local systemd docker service doing?"
+```
+
+---
+
+## 🧩 Adding Tools (Cartridges)
+
+Out of the box, Sahayak is a blank slate. You teach it how to manage your infrastructure by installing **Cartridges** (plugins for Kubernetes, AWS, Docker, Redis, etc.). 
+
+Add the official registry and install the tools you use:
+```sh
+sahayak cartridge registry add https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/index.json
+
+sahayak cartridge install k8s
+sahayak cartridge install systemd
+```
+
+---
+
+## 📚 Documentation
+
+The `docs/` folder contains everything you need to deploy Sahayak across your engineering team:
+
+- **[Installation Guide](./docs/installation.md)**: Setup, models, and dependencies.
+- **[Commands & Options](./docs/commands.md)**: Interactive shell features and CLI arguments.
+- **[Configuration Guide](./docs/configuration.md)**: Environment variables and tuning.
+- **[Ops Teams Guide](./docs/ops-teams.md)**: Best practices for securely sharing cartridges across your team.
+
+---
+
+## 🛠️ For Developers & Architects
+
+Sahayak solves the "AI safety" problem by dividing labor: **The LLM understands, Go acts, and Humans approve**. If you want to contribute, build custom internal cartridges, or embed Sahayak directly into air-gapped appliances without Ollama, check out our developer docs:
+
+- **[Architecture Deep Dive](./ARCHITECTURE.md)**: Why we avoid unbounded AI agents.
+- **[Cartridge Creation](./docs/cartridges.md)**: How to build, sign, and publish your own tool plugins.
+- **[Embedded Appliance Mode](./docs/embedded-appliance.md)**: Running Sahayak fully standalone with a bundled C++ `llama-server`.
+- **[Self-Learning Engine](./docs/self-learning.md)**: How Sahayak safely observes your terminal to suggest new templates.
+
+### Building from Source
+Sahayak is a pure, CGO-free Go binary.
+```sh
+make build   # Compiles to ./bin/sahayak (cross-compiles trivially)
+make test    # 16 tested packages
+```
 
 ## License
 
