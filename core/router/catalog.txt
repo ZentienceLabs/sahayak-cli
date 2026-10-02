@@ -1,0 +1,89 @@
+# Sahayak intent catalog — DATA, not code.
+#
+# This is the data-driven half of the semantic router. To teach Sahayak a new way
+# of phrasing a request, ADD A LINE here — no Go, no recompiling a regex. Each
+# request is matched by MEANING to the nearest example below (semantic similarity),
+# and routed to that example's playbook kind; Go then fills the slots deterministically
+# (playbook.BuildPlan) and only fires if every required slot is grounded in the request.
+#
+# Format:
+#   intent <name> <kind>      starts an intent block; <kind> must be a known playbook
+#                             kind: list | logs | image | rollout | restart |
+#                             verifyenv | searchcfg
+#   - <example phrase>        an example phrasing for that intent (use X/Y as a
+#                             stand-in for the app/keyword the user will name)
+#
+# Blank lines and lines beginning with # are ignored. The default catalog ships
+# embedded; a user file (SAHAYAK_CATALOG=/path) is appended on top of it.
+
+intent list-resource list
+- list configmaps for X
+- show me the services in X
+- get deployments for X
+- which pods of X are there
+- provide the configmap list for X
+- display all secrets in X
+- what ingresses exist for X
+- enumerate the statefulsets in X
+
+intent pod-logs logs
+- why is X failing
+- show me errors in X logs
+- X is crashing
+- what is wrong with X
+- debug the X logs
+- X keeps throwing exceptions
+- look at why X is broken
+- investigate the failures in X
+- X is returning 500s
+
+intent deployment-image image
+- what image is X running
+- show the image tag for X
+- which version is X on
+- what container image does X use
+- tell me X current tag
+
+intent rollout-status rollout
+- rollout status of X
+- is X rolled out
+- did the X deployment finish rolling out
+- has X finished its rollout
+- check the rollout for X
+
+intent restart-deployment restart
+- restart X
+- redeploy X
+- bounce X
+- please restart the X deployment
+- cycle the pods for X
+- kick X to pick up new config
+- force a fresh start of X
+
+intent verify-env verifyenv
+- is CONSOLE_WORKFLOW_REDESIGN set in X
+- verify FEATURE_X_ENABLED in X
+- check the value of MY_FLAG in X
+- what is THE_ENV_VAR set to in X
+- confirm DEBUG_MODE is enabled in X
+
+intent app-status status
+- how is X doing
+- is X healthy
+- health of X
+- give me the full picture of X
+- what's the overall state of X
+- give me a status rundown for X
+- how are things looking for X
+- summarize the health of X
+
+intent search-config searchcfg
+- is there a config flag for X
+- find an env var related to X
+- which configmap key contains X
+- is there a setting about X
+- is console workflow ui in configmap
+- do we have a config for X
+- search the configmaps for X
+- is the X flag turned on anywhere
+- what config controls X

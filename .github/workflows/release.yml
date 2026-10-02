@@ -1,0 +1,37 @@
+name: Release
+
+# Cut a release by pushing a semver tag, e.g.:
+#   git tag v0.1.0 && git push origin v0.1.0
+# GoReleaser then builds the CGO-free "lite" binaries for all platforms, makes
+# archives + checksums + SBOMs, and publishes a GitHub Release with the notes.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write   # needed to create the GitHub Release
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history for the changelog
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache: true
+
+      - name: Install syft (for SBOMs)
+        uses: anchore/sbom-action/download-syft@v0
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

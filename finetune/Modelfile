@@ -1,0 +1,15 @@
+# Import the fine-tuned router GGUF into Ollama as `sahayak-router`, so the CLI can use
+# it via the Ollama adapter:  sahayak ask --model sahayak-router "..."
+#
+#   ollama create sahayak-router -f Modelfile
+#
+# The GGUF must sit next to this file (download it from the Modal volume first).
+FROM ./sahayak-router-q8_0.gguf
+
+# Deterministic routing — temperature 0, matching the CLI's classify call.
+PARAMETER temperature 0
+PARAMETER top_p 1
+
+# The router is a classifier: it emits ONE small JSON object and stops. Keeping the
+# prediction short avoids it rambling past the JSON.
+PARAMETER num_predict 128

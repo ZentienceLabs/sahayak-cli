@@ -1,0 +1,5 @@
+go 1.25
+
+// Single module today; this workspace file is here so core/* packages can be
+// split into independent modules later without restructuring the repo.
+use .

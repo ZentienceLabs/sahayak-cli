@@ -1,0 +1,6 @@
+{"text":"kubectl get pods -n <ns> lists pods in a namespace; add --field-selector status.phase=Running to show only running pods","command":"kubectl","kind":"flag"}
+{"text":"kubectl rollout restart deployment/<name> restarts a deployment by rolling its pods one by one with zero downtime","command":"kubectl","kind":"example"}
+{"text":"kubectl rollout undo deployment/<name> rolls a deployment back to its previous revision","command":"kubectl","kind":"example"}
+{"text":"ImagePullBackOff means the kubelet could not pull the container image; verify the image name, tag, and registry credentials (imagePullSecrets)","command":"kubectl","kind":"error_pattern"}
+{"text":"CrashLoopBackOff means the container starts then exits repeatedly; inspect kubectl logs --previous and the container command and probes","command":"kubectl","kind":"error_pattern"}
+{"text":"kubectl logs --previous <pod> shows logs from the previous crashed container instance","command":"kubectl","kind":"flag"}

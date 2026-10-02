@@ -1,0 +1,62 @@
+[
+  {
+    "id": "anthropic",
+    "name": "Anthropic (Claude)",
+    "api": "anthropic",
+    "api_key_env": "ANTHROPIC_API_KEY",
+    "base_url_env": "ANTHROPIC_BASE_URL",
+    "default_base_url": "https://api.anthropic.com",
+    "default_model": "claude-opus-4-8",
+    "models": [
+      { "id": "claude-opus-4-8", "name": "Claude Opus 4.8", "context": 1000000, "note": "most capable" },
+      { "id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6", "context": 1000000, "note": "balanced" },
+      { "id": "claude-haiku-4-5", "name": "Claude Haiku 4.5", "context": 200000, "note": "fast/cheap" }
+    ]
+  },
+  {
+    "id": "openai",
+    "name": "OpenAI",
+    "api": "openai",
+    "api_key_env": "OPENAI_API_KEY",
+    "base_url_env": "OPENAI_BASE_URL",
+    "default_base_url": "https://api.openai.com/v1",
+    "default_model": "gpt-4o-mini",
+    "models": [
+      { "id": "gpt-4o", "name": "GPT-4o" },
+      { "id": "gpt-4o-mini", "name": "GPT-4o mini", "note": "fast/cheap" }
+    ]
+  },
+  {
+    "id": "groq",
+    "name": "Groq",
+    "api": "openai",
+    "api_key_env": "GROQ_API_KEY",
+    "base_url_env": "GROQ_BASE_URL",
+    "default_base_url": "https://api.groq.com/openai/v1",
+    "default_model": "llama-3.3-70b-versatile",
+    "models": [
+      { "id": "llama-3.3-70b-versatile", "name": "Llama 3.3 70B" }
+    ]
+  },
+  {
+    "id": "openrouter",
+    "name": "OpenRouter",
+    "api": "openai",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "base_url_env": "OPENROUTER_BASE_URL",
+    "default_base_url": "https://openrouter.ai/api/v1",
+    "default_model": "openai/gpt-4o-mini",
+    "models": []
+  },
+  {
+    "id": "openai-compatible",
+    "name": "Generic OpenAI-compatible (vLLM / LM Studio / Ollama / gateway)",
+    "api": "openai",
+    "api_key_env": "SAHAYAK_CLOUD_API_KEY",
+    "base_url_env": "SAHAYAK_CLOUD_BASE_URL",
+    "default_base_url": "http://127.0.0.1:8000/v1",
+    "default_model": "",
+    "note": "Point base_url at any OpenAI-compatible server; set SAHAYAK_MODEL to its model id. Can be fully local/sovereign.",
+    "models": []
+  }
+]

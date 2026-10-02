@@ -1,0 +1,41 @@
+name: Validate
+
+# Every index entry must point at a real cartridge file whose sha256 matches, and each
+# cartridge must be valid JSON whose name matches the entry. Keeps the registry honest.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate index.json against cartridges
+        run: |
+          python3 - <<'PY'
+          import json, hashlib, os, sys
+          idx = json.load(open("index.json"))
+          ok = True
+          for c in idx.get("cartridges", []):
+              name = c.get("name", "?")
+              local = os.path.join("cartridges", os.path.basename(c.get("url", "")))
+              if not os.path.exists(local):
+                  print(f"::error::{name}: referenced file {local} is missing"); ok = False; continue
+              data = open(local, "rb").read()
+              got = hashlib.sha256(data).hexdigest()
+              if got != c.get("sha256"):
+                  print(f"::error::{name}: sha256 mismatch (index={c.get('sha256')} file={got})"); ok = False
+              try:
+                  cj = json.loads(data)
+                  if cj.get("name") != name:
+                      print(f"::error::{name}: cartridge 'name' is {cj.get('name')!r}"); ok = False
+                  if not cj.get("templates") and not cj.get("knowledge"):
+                      print(f"::error::{name}: cartridge has neither templates nor knowledge"); ok = False
+              except Exception as e:
+                  print(f"::error::{name}: invalid cartridge JSON: {e}"); ok = False
+          print("OK — all entries valid" if ok else "FAILED")
+          sys.exit(0 if ok else 1)
+          PY

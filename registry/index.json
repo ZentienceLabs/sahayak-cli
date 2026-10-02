@@ -1,0 +1,22 @@
+{
+  "cartridges": [
+    {
+      "name": "k8s",
+      "version": "1.0.0",
+      "tool": "kubectl",
+      "description": "Kubernetes: list/logs/image/rollout/restart/verifyenv/searchcfg/status",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/k8s.json",
+      "sha256": "8563b193565ab683ef869bd09ee464cce7b5bf9e09af0565c7eb217e1f97b269",
+      "signature": "yeBDhCGMiQxiI2EDKIj7UNJjE53wqnP53ovoPfW1yelYceGjYoQjVq7B0pqbXx+kkn8Ops27j1eTUp6SWOUtCA=="
+    },
+    {
+      "name": "systemd",
+      "version": "1.0.0",
+      "tool": "systemctl",
+      "description": "systemd services: status/restart/start/stop/logs/enable",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/systemd.json",
+      "sha256": "8701877fc614efc95b2115e2c0be4c84251be43b8295c843c75e0a548fedfece",
+      "signature": "XxaOEkJBGvx5JUeFY7PYqPAVyeIJwgluC/o392LYpBB6DnRXr9Dyp4TN5CjH0XnnCuRdw9SvPAzJeNj4AHDVBQ=="
+    }
+  ]
+}

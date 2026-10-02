@@ -1,0 +1,50 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The exact command(s) you ran. For a routing miss, include the exact phrasing.
+      placeholder: |
+        sahayak ask "..."
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `sahayak version`
+    validations:
+      required: true
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Backend
+      options: [Ollama, Embedded (llama-server), Other]
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model & embedder
+      description: e.g. qwen3:4b-instruct, SAHAYAK_EMBEDDER=ollama:nomic-embed-text
+  - type: input
+    id: os
+    attributes:
+      label: OS / arch
+      description: e.g. macOS 14 arm64, Ubuntu 24.04 amd64, Windows 11
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Paste output. REDACT any secrets, tokens, hostnames, or internal names.
+      render: shell

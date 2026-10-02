@@ -1,0 +1,64 @@
+# GoReleaser config for Sahayak.
+#
+# This builds the LITE binary (Ollama / bring-your-own-endpoint, ~15 MB, CGO-free,
+# clean cross-compile). The self-contained APPLIANCE build — which go:embeds the
+# llama-server binary + Granite GGUF weights — is produced by a separate, per-OS
+# pipeline (it can't cross-compile and the artifact is multi-GB); see docs.
+version: 2
+
+project_name: sahayak
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: sahayak
+    main: ./cmd/sahayak
+    binary: sahayak
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/ZentienceLabs/sahayak-cli/core/version.Version={{.Version}}
+      - -X github.com/ZentienceLabs/sahayak-cli/core/version.Commit={{.ShortCommit}}
+      - -X github.com/ZentienceLabs/sahayak-cli/core/version.Date={{.Date}}
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+
+archives:
+  - id: default
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - project.md
+      - LICENSE*
+      - NOTICE.md
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+sboms:
+  - artifacts: archive
+
+# Releases are signed in CI with cosign (keyless). Uncomment when wired:
+# signs:
+#   - cmd: cosign
+#     args: ["sign-blob", "--yes", "--output-signature=${signature}", "${artifact}"]
+#     artifacts: checksum
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-dev"
+
+changelog:
+  use: github
+  sort: asc
+  filters:
+    exclude: ["^docs:", "^test:", "^chore:"]
