@@ -4,7 +4,15 @@ title: Home
 nav_order: 1
 ---
 
-**Navigation:** [Home](./README.md) | [Installation](./installation.md) | [Configuration](./configuration.md) | [Commands](./commands.md) | [Cartridges](./cartridges.md) | [Ops Teams](./ops-teams.md) | [Self-Learning](./self-learning.md) | [Embedded Appliance](./embedded-appliance.md)
+**Navigation:**
+- [Home](./README.md)
+- [Installation](./installation.md)
+- [Configuration](./configuration.md)
+- [Commands](./commands.md)
+- [Cartridges](./cartridges.md)
+- [Ops Teams](./ops-teams.md)
+- [Self-Learning](./self-learning.md)
+- [Embedded Appliance](./embedded-appliance.md)
 
 ***
 

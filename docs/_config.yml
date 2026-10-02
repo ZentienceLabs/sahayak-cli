@@ -1,5 +1,5 @@
 title: Sahayak CLI
 description: A sovereign, air-gapped AI command-line assistant for DevOps and Sysadmins.
-theme: jekyll-theme-tactile
+theme: jekyll-theme-primer
 color_scheme: dark
 search_enabled: true
