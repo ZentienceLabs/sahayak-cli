@@ -17,7 +17,7 @@ func runConfig(_ context.Context, args []string) error {
 	switch sub {
 	case "view":
 		fmt.Printf("Current Configuration:\n")
-		fmt.Printf("  engine:   %s\n", cfg.Engine)
+		fmt.Printf("  engine:   %s\n", cfg.Mode)
 		fmt.Printf("  endpoint: %s\n", cfg.Endpoint)
 		fmt.Printf("  model:    %s\n", cfg.Model)
 		fmt.Printf("  embedder: %s\n", cfg.Embedder)
@@ -31,7 +31,7 @@ func runConfig(_ context.Context, args []string) error {
 
 		switch key {
 		case "engine":
-			cfg.Engine = config.Engine(val)
+			cfg.Mode = config.Engine(val)
 		case "endpoint":
 			cfg.Endpoint = val
 		case "model":
@@ -39,7 +39,7 @@ func runConfig(_ context.Context, args []string) error {
 		case "embedder":
 			cfg.Embedder = val
 		default:
-			return fmt.Errorf("unknown config key %q (supported: engine, endpoint, model, embedder)", key)
+			return fmt.Errorf("unknown config key %q (supported: mode, endpoint, model, embedder)", key)
 		}
 
 		if err := config.Save(cfg); err != nil {

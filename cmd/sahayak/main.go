@@ -86,7 +86,7 @@ func main() {
 func runAsk(ctx context.Context, args []string) error {
 	fs := flag.NewFlagSet("ask", flag.ContinueOnError)
 	cfg := config.Defaults()
-	engine := fs.String("engine", string(cfg.Engine), "brain: ollama (dev) | embedded (appliance, Phase 6)")
+	mode := fs.String("mode", string(cfg.Mode), "sovereign | cloud | hybrid")
 	fs.StringVar(&cfg.Endpoint, "endpoint", cfg.Endpoint, "inference endpoint (Ollama)")
 	fs.StringVar(&cfg.Model, "model", cfg.Model, "model tag")
 	yolo := fs.Bool("approve-all-readonly", cfg.AutoRunReadOnly, "auto-run read-only steps without prompting")
@@ -97,7 +97,7 @@ func runAsk(ctx context.Context, args []string) error {
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
-	cfg.Engine = config.Engine(*engine)
+	cfg.Mode = config.Mode(*mode)
 	cfg.AutoRunReadOnly = *yolo
 
 	request := strings.TrimSpace(strings.Join(fs.Args(), " "))
@@ -135,16 +135,16 @@ func runAsk(ctx context.Context, args []string) error {
 func runDoctor(ctx context.Context, args []string) error {
 	fs := flag.NewFlagSet("doctor", flag.ContinueOnError)
 	cfg := config.Defaults()
-	engine := fs.String("engine", string(cfg.Engine), "brain: ollama (dev) | embedded (appliance, Phase 6)")
+	mode := fs.String("mode", string(cfg.Mode), "sovereign | cloud | hybrid")
 	fs.StringVar(&cfg.Endpoint, "endpoint", cfg.Endpoint, "inference endpoint (Ollama)")
 	fs.StringVar(&cfg.Model, "model", cfg.Model, "model tag")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
-	cfg.Engine = config.Engine(*engine)
+	cfg.Mode = config.Mode(*mode)
 
 	fmt.Printf("Sahayak doctor\n")
-	fmt.Printf("  engine:   %s\n", cfg.Engine)
+	fmt.Printf("  mode:     %s\n", cfg.Mode)
 	fmt.Printf("  endpoint: %s\n", cfg.Endpoint)
 	fmt.Printf("  model:    %s\n", cfg.Model)
 	fmt.Printf("  embedder: %s\n", cfg.Embedder)
@@ -160,10 +160,10 @@ func runDoctor(ctx context.Context, args []string) error {
 	provider := newProvider(cfg)
 	if err := provider.Health(ctx); err != nil {
 		fmt.Printf("  backend:  ✗ %v\n", err)
-		switch cfg.Engine {
-		case config.EngineOllama:
+		switch cfg.Mode {
+		case config.ModeSovereign:
 			fmt.Printf("\nNot ready. Start Ollama (`ollama serve`) and pull a model (`ollama pull %s`).\n", cfg.Model)
-		case config.EngineCloud:
+		case config.ModeCloud:
 			fmt.Printf("\nNot ready. The cloud engine (%s) calls a hosted API — set ANTHROPIC_API_KEY and SAHAYAK_MODEL=claude-opus-4-8.\nNote: this engine is NOT sovereign — requests leave the host. Use ollama/embedded for the air-gapped appliance.\n", cfg.CloudProvider)
 		default:
 			fmt.Printf("\nNot ready. Bundle the embedded engine, or set SAHAYAK_LLAMA_SERVER + SAHAYAK_MODEL_PATH for dev.\n")
@@ -178,10 +178,10 @@ func runDoctor(ctx context.Context, args []string) error {
 // everything above this line is engine-agnostic. Ollama is the Phase-1 dev brain;
 // the embedded llama-server appliance (Phase 6) plugs in here with no other change.
 func newProvider(cfg config.Config) llm.Provider {
-	switch cfg.Engine {
+	switch cfg.Mode {
 	case config.EngineEmbedded:
 		return llm.NewEmbedded(cfg.Model)
-	case config.EngineCloud:
+	case config.ModeCloud:
 		return newCloudProvider(cfg)
 	default:
 		return llm.NewOllama(cfg.Endpoint, cfg.Model)
@@ -227,7 +227,7 @@ Knowledge:
   sahayak knowledge remove <name>
 
 Flags (ask/doctor):
-  --engine <name>    ollama (dev) | embedded   (env SAHAYAK_ENGINE)
+  --mode <name>      sovereign | cloud | hybrid (env SAHAYAK_MODE)
   --endpoint <url>   inference endpoint        (env SAHAYAK_ENDPOINT)
   --model <tag>      model to use              (env SAHAYAK_MODEL)
   --approve-all-readonly=false   prompt for read-only steps too
