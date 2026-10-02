@@ -1,4 +1,4 @@
-# sahayak-registry
+# sahayak-cli (registry)
 
 A **static cartridge registry** for Sahayak. This is intentionally a *separate repo* from
 the CLI — cartridges change far more often than the binary, are community/org-contributed,
@@ -16,14 +16,14 @@ cartridges/
 ## Hosting on GitHub
 Push this repo, then the index is available at its raw URL:
 ```
-https://raw.githubusercontent.com/ZentienceLabs/sahayak-registry/main/index.json
+https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/index.json
 ```
 Each `index.json` entry's `url` points at the raw URL of its cartridge file, and `sha256`
 is the digest of that file (the CLI verifies it on install).
 
 ## Using it from the CLI
 ```
-sahayak cartridge registry add https://raw.githubusercontent.com/ZentienceLabs/sahayak-registry/main/index.json
+sahayak cartridge registry add https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/index.json
 sahayak cartridge search redis
 sahayak cartridge install k8s        # resolves via the index, verifies the checksum
 ```
@@ -38,7 +38,7 @@ sahayak cartridge trust add fulEJgyF8DPnFR7cKcB00whsinJc2KXHMy692WfY/3M=
 sahayak cartridge install k8s        # → "signature verified"
 ```
 
-Public key for `ZentienceLabs/sahayak-registry`:
+Public key for `ZentienceLabs/sahayak-cli (registry)`:
 ```
 fulEJgyF8DPnFR7cKcB00whsinJc2KXHMy692WfY/3M=
 ```

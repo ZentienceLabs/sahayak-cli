@@ -20,7 +20,7 @@ the right cartridge intent, grounds the slots, builds the command, and gates it.
 ## Install from the registry (verified)
 
 ```sh
-sahayak cartridge registry add https://raw.githubusercontent.com/ZentienceLabs/sahayak-registry/main/index.json
+sahayak cartridge registry add https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/index.json
 sahayak cartridge trust add fulEJgyF8DPnFR7cKcB00whsinJc2KXHMy692WfY/3M=   # ZentienceLabs publisher key
 sahayak cartridge search ""            # list everything; or: search redis
 sahayak cartridge install k8s          # downloads → verifies checksum + signature → installs
@@ -152,7 +152,7 @@ Then in your registry `index.json`:
 
 Users `cartridge trust add <your-public-key>` once, then every install from you is
 authenticity-verified. See the registry repo:
-[ZentienceLabs/sahayak-registry](https://github.com/ZentienceLabs/sahayak-registry).
+[ZentienceLabs/sahayak-cli (registry)](https://github.com/ZentienceLabs/sahayak-cli/tree/main/registry).
 
 ## The trust model
 - **Checksum** (`sha256`) → integrity: the bytes weren't corrupted/tampered in transit.

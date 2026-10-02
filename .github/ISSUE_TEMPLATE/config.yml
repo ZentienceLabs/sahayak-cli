@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/ZentienceLabs/sahayak-cli/security/advisories/new
     about: Report security issues privately — please do not open a public issue.
   - name: Add or publish a cartridge
-    url: https://github.com/ZentienceLabs/sahayak-registry
+    url: https://github.com/ZentienceLabs/sahayak-cli/tree/main/registry
     about: New tool support is usually a cartridge (data) — open a PR to the registry.

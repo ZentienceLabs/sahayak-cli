@@ -74,7 +74,7 @@ pull a model (or set the embedded env vars).
 Tools beyond the built-in `k8s` and `systemd` are installed as cartridges:
 
 ```sh
-sahayak cartridge registry add https://raw.githubusercontent.com/ZentienceLabs/sahayak-registry/main/index.json
+sahayak cartridge registry add https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/index.json
 sahayak cartridge trust add fulEJgyF8DPnFR7cKcB00whsinJc2KXHMy692WfY/3M=
 sahayak cartridge install k8s
 ```
