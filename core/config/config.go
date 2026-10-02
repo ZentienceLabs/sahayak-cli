@@ -8,17 +8,17 @@ import (
 )
 
 // Engine selects which brain backs the session.
-type Engine string
+type Mode string
 
 const (
-	EngineOllama   Engine = "ollama"
-	EngineEmbedded Engine = "embedded"
-	EngineCloud    Engine = "cloud"
+	ModeSovereign Mode = "sovereign"
+	ModeCloud     Mode = "cloud"
+	ModeHybrid    Mode = "hybrid"
 )
 
 // Config holds resolved settings for a run.
 type Config struct {
-	Engine          Engine `json:"engine"`
+	Mode            Mode   `json:"mode"`
 	Endpoint        string `json:"endpoint"`
 	Model           string `json:"model"`
 	AutoRunReadOnly bool   `json:"auto_run_readonly"`
@@ -29,7 +29,7 @@ type Config struct {
 // Defaults returns baseline settings, overlaying JSON config and ENV vars.
 func Defaults() Config {
 	c := Config{
-		Engine:          EngineOllama,
+		Mode:           ModeSovereign,
 		Endpoint:        "http://127.0.0.1:11434",
 		Model:           "qwen3:4b-instruct",
 		AutoRunReadOnly: true,
@@ -53,8 +53,8 @@ func Defaults() Config {
 	if v := os.Getenv("SAHAYAK_MODEL"); v != "" {
 		c.Model = v
 	}
-	if v := os.Getenv("SAHAYAK_ENGINE"); v != "" {
-		c.Engine = Engine(v)
+	if v := os.Getenv("SAHAYAK_MODE"); v != "" {
+		c.Mode = Mode(v)
 	}
 	if v := os.Getenv("SAHAYAK_EMBEDDER"); v != "" {
 		c.Embedder = v
