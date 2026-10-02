@@ -132,15 +132,28 @@ func (p *Printer) Output(s string) {
 	fmt.Fprint(p.w, b.String())
 }
 
-// Conclusion prints the final answer in a bordered box.
+// Conclusion prints the final answer in a bordered box with markdown formatting.
 func (p *Printer) Conclusion(s string) {
 	title := sBrand.Render("Conclusion")
+	
+	outStr := strings.TrimSpace(s)
+	if p.tty {
+		// Render markdown for TTY
+		r, _ := glamour.NewTermRenderer(
+			glamour.WithAutoStyle(),
+			glamour.WithWordWrap(70),
+		)
+		if rendered, err := r.Render(s); err == nil {
+			outStr = strings.TrimSpace(rendered)
+		}
+	}
+
 	body := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(cBrand).
 		Padding(0, 2).
 		Width(74).
-		Render(strings.TrimSpace(s))
+		Render(outStr)
 	p.line("")
 	p.line(title)
 	p.line(body)
