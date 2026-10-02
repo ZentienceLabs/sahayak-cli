@@ -161,6 +161,11 @@ func (m promptModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.ta.SetValue("")
 			m.done = true
 			return m, tea.Quit
+		case tea.KeyCtrlR:
+			m.done = true
+			m.eof = false
+			m.ta.SetValue("\033ctrl-r")
+			return m, tea.Quit
 		case tea.KeyEnter: // submit (Tab accepts a suggestion; newline is Ctrl-J)
 			m.done = true
 			return m, tea.Quit
