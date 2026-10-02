@@ -236,7 +236,7 @@ func runShell(ctx context.Context, args []string) error {
 			}
 		case "--engine":
 			if i+1 < len(args) {
-				cfg.Engine = config.Engine(args[i+1])
+				cfg.Mode = config.Mode(args[i+1])
 				i++
 			}
 		}
@@ -256,7 +256,7 @@ func runShell(ctx context.Context, args []string) error {
 	}
 
 	// Model selection on a real terminal (Enter keeps the default).
-	if tui.IsInteractive() && cfg.Engine == config.EngineOllama {
+	if tui.IsInteractive() && cfg.Mode == config.ModeSovereign {
 		if models, err := listModels(ctx, cfg.Endpoint); err == nil && len(models) > 0 {
 			cfg.Model = pickModel(rich, in, models, cfg.Model)
 		}

@@ -31,7 +31,7 @@ func runConfig(_ context.Context, args []string) error {
 
 		switch key {
 		case "engine":
-			cfg.Mode = config.Engine(val)
+			cfg.Mode = config.Mode(val)
 		case "endpoint":
 			cfg.Endpoint = val
 		case "model":

@@ -179,7 +179,7 @@ func runDoctor(ctx context.Context, args []string) error {
 // the embedded llama-server appliance (Phase 6) plugs in here with no other change.
 func newProvider(cfg config.Config) llm.Provider {
 	switch cfg.Mode {
-	case config.EngineEmbedded:
+	case config.ModeSovereign:
 		return llm.NewEmbedded(cfg.Model)
 	case config.ModeCloud:
 		return newCloudProvider(cfg)
