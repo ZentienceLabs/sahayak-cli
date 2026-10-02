@@ -4,6 +4,10 @@ title: Ops Teams Guide
 nav_order: 6
 ---
 
+**Navigation:** [Home](./README.md) | [Installation](./installation.md) | [Configuration](./configuration.md) | [Commands](./commands.md) | [Cartridges](./cartridges.md) | [Ops Teams](./ops-teams.md) | [Self-Learning](./self-learning.md) | [Embedded Appliance](./embedded-appliance.md)
+
+***
+
 # Sahayak for Ops Teams
 
 Sahayak is not just a personal AI chatbot—it is designed to be a **Team Playbook Engine**. For mature Ops and Platform Engineering teams, Sahayak solves the friction of discoverability, onboarding, and safely executing standard operating procedures (SOPs).

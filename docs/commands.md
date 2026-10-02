@@ -4,6 +4,10 @@ title: Commands & Options
 nav_order: 4
 ---
 
+**Navigation:** [Home](./README.md) | [Installation](./installation.md) | [Configuration](./configuration.md) | [Commands](./commands.md) | [Cartridges](./cartridges.md) | [Ops Teams](./ops-teams.md) | [Self-Learning](./self-learning.md) | [Embedded Appliance](./embedded-appliance.md)
+
+***
+
 # Command Reference
 
 Every Sahayak command and option. Run `sahayak help` for the short version.

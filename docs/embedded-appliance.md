@@ -4,6 +4,10 @@ title: Embedded Appliance
 nav_order: 7
 ---
 
+**Navigation:** [Home](./README.md) | [Installation](./installation.md) | [Configuration](./configuration.md) | [Commands](./commands.md) | [Cartridges](./cartridges.md) | [Ops Teams](./ops-teams.md) | [Self-Learning](./self-learning.md) | [Embedded Appliance](./embedded-appliance.md)
+
+***
+
 # Embedded Appliance (sealed, air-gapped)
 
 The default brain is Ollama (a separate daemon). The **embedded** engine instead runs a

@@ -4,6 +4,10 @@ title: Self-Learning Engine
 nav_order: 8
 ---
 
+**Navigation:** [Home](./README.md) | [Installation](./installation.md) | [Configuration](./configuration.md) | [Commands](./commands.md) | [Cartridges](./cartridges.md) | [Ops Teams](./ops-teams.md) | [Self-Learning](./self-learning.md) | [Embedded Appliance](./embedded-appliance.md)
+
+***
+
 # Self-learning
 
 Sahayak gets better with use — **safely**. It records what happened, judged by
