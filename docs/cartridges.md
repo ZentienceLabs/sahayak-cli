@@ -1,3 +1,9 @@
+---
+layout: default
+title: Cartridges
+nav_order: 5
+---
+
 # Cartridges
 
 A **cartridge** teaches Sahayak a tool — as *data*, not code. It bundles **command

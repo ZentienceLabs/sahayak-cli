@@ -1,3 +1,9 @@
+---
+layout: default
+title: Ops Teams Guide
+nav_order: 6
+---
+
 # Sahayak for Ops Teams
 
 Sahayak is not just a personal AI chatbot—it is designed to be a **Team Playbook Engine**. For mature Ops and Platform Engineering teams, Sahayak solves the friction of discoverability, onboarding, and safely executing standard operating procedures (SOPs).

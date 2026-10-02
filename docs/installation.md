@@ -1,3 +1,9 @@
+---
+layout: default
+title: Installation
+nav_order: 2
+---
+
 # Installation
 
 Sahayak is a single static Go binary (`CGO_ENABLED=0`). It needs a local **model backend**

@@ -1,3 +1,9 @@
+---
+layout: default
+title: Commands & Options
+nav_order: 4
+---
+
 # Command Reference
 
 Every Sahayak command and option. Run `sahayak help` for the short version.
