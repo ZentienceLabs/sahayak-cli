@@ -340,6 +340,10 @@ func runShell(ctx context.Context, args []string) error {
 				if err := runMemory(ctx, fields[1:]); err != nil {
 					fmt.Fprintf(os.Stderr, "error: %v\n", err)
 				}
+			case "config":
+				if err := runConfig(ctx, fields[1:]); err != nil {
+					fmt.Fprintf(os.Stderr, "error: %v\n", err)
+				}
 			case "legacy":
 				mode := "cartridge engine (default)"
 				if a.Cartridges == nil {

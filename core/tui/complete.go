@@ -56,6 +56,8 @@ var slashArgs = map[string][]SlashArg{
 	"learn":              {{"suggest", "show learning suggestions"}, {"promote", "promote a learned command"}, {"forget", "clear the learning log"}},
 	"knowledge":          {{"install", "install a .sahayakpack"}, {"list", "list packs"}, {"search", "search packs"}, {"build", "build a pack"}, {"remove", "remove a pack"}},
 	"memory":             {{"add", "add a note"}, {"list", "list notes"}, {"search", "search notes"}, {"forget", "forget a note"}},
+	"config":             {{"view", "view current configuration"}, {"set", "set a configuration key"}},
+	"config set":         {{"mode", "sovereign | cloud | hybrid"}, {"endpoint", "set endpoint url"}, {"model", "set default model"}},
 }
 
 // SlashCommands is the palette. The shell dispatches these (they are not sent to the model).
@@ -67,6 +69,7 @@ var SlashCommands = []SlashCommand{
 	{"/learn", "self-learning suggestions"},
 	{"/knowledge", "manage knowledge packs"},
 	{"/memory", "long-term memory notes"},
+	{"/config", "view or edit configuration"},
 	{"/clear", "clear the screen"},
 	{"/legacy", "toggle legacy routing for this session"},
 	{"/exit", "quit the shell"},
