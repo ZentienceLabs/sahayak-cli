@@ -65,9 +65,13 @@ func main() {
 	case "help", "--help", "-h":
 		usage()
 	default:
-		fmt.Fprintf(os.Stderr, "unknown command %q\n\n", cmd)
-		usage()
-		os.Exit(2)
+		// Implicit ask: if it's not a known command, assume it's a natural language query
+		if strings.HasPrefix(cmd, "-") {
+			fmt.Fprintf(os.Stderr, "unknown command or flag %q\n\n", cmd)
+			usage()
+			os.Exit(2)
+		}
+		err = runAsk(ctx, append([]string{cmd}, args...))
 	}
 
 	if err != nil {
@@ -204,6 +208,8 @@ Usage:
   sahayak shell                         same, explicit
   sahayak ask "<what you want to do>"   one-shot: propose, explain, approve & run
   sahayak models                        list installed models
+  sahayak cartridge <cmd>               manage tool packs and plugins
+  sahayak learn <cmd>                   view and promote learned commands
   sahayak knowledge <cmd>               manage offline knowledge packs (RAG)
   sahayak memory <cmd>                  add/list/search/forget long-term memory
   sahayak doctor                        check backend connectivity & config
