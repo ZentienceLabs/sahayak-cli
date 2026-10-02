@@ -24,7 +24,13 @@ appliance.
 
 ## 1. Install the CLI
 
-### With Go (recommended)
+### Pre-compiled Binaries (Recommended)
+Download the latest release for Windows, macOS, or Linux directly from our GitHub Releases page:
+[Download Sahayak CLI](https://github.com/ZentienceLabs/sahayak-cli/releases/latest)
+
+Extract the archive and move the `sahayak` binary to your PATH (e.g. `/usr/local/bin` on Linux/macOS).
+
+### With Go
 ```sh
 go install github.com/ZentienceLabs/sahayak-cli/cmd/sahayak@latest
 # binary lands in $(go env GOPATH)/bin — make sure that's on your PATH
