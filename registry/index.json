@@ -17,6 +17,69 @@
       "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/systemd.json",
       "sha256": "8701877fc614efc95b2115e2c0be4c84251be43b8295c843c75e0a548fedfece",
       "signature": "XxaOEkJBGvx5JUeFY7PYqPAVyeIJwgluC/o392LYpBB6DnRXr9Dyp4TN5CjH0XnnCuRdw9SvPAzJeNj4AHDVBQ=="
+    },
+    {
+      "name": "docker",
+      "version": "1.0.0",
+      "tool": "docker",
+      "description": "Docker containers: ps/logs/restart/stop/prune",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/docker.json",
+      "sha256": "931824ea4b5507630adeeac782d12ebb6137edf00b802e61ec7562376f697d29",
+      "signature": "TBD"
+    },
+    {
+      "name": "redis",
+      "version": "1.0.0",
+      "tool": "redis-cli",
+      "description": "Redis: ping/info/flushall",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/redis.json",
+      "sha256": "8a32c92a6b1f8a3d3a8a9be8d24887aa7319498b397bce0ba9e480c73329a81b",
+      "signature": "TBD"
+    },
+    {
+      "name": "linux-net",
+      "version": "1.0.0",
+      "tool": "linux-net",
+      "description": "Linux networking: ping, lsof (ports), dig",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/linux-net.json",
+      "sha256": "7cfb824750707de4ee4c857d17690d36d5bcd3559bef61d9859a8a86e578ac60",
+      "signature": "TBD"
+    },
+    {
+      "name": "aws-ec2",
+      "version": "1.0.0",
+      "tool": "aws",
+      "description": "AWS EC2: list, start, stop instances",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/aws-ec2.json",
+      "sha256": "3e5df51f81c99f86410c171f8052df565dedd90785d7d00cd861c16530f0840b",
+      "signature": "TBD"
+    },
+    {
+      "name": "postgres",
+      "version": "1.0.0",
+      "tool": "psql",
+      "description": "PostgreSQL: active queries, db sizing",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/postgres.json",
+      "sha256": "c7e43fcb7df27d275c4f5f43a827fe6437b25cc5127e32d1b1f385a37123ad57",
+      "signature": "TBD"
+    },
+    {
+      "name": "nginx",
+      "version": "1.0.0",
+      "tool": "nginx",
+      "description": "Nginx: test config (-t), reload without dropping packets",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/nginx.json",
+      "sha256": "bcfb45f0fea9afe20cb29a12c21801b0d2668b90a45c2340737c876a9bccf9b3",
+      "signature": "TBD"
+    },
+    {
+      "name": "git",
+      "version": "1.0.0",
+      "tool": "git",
+      "description": "Git: repository status and recent logs",
+      "url": "https://raw.githubusercontent.com/ZentienceLabs/sahayak-cli/main/registry/cartridges/git.json",
+      "sha256": "ed6aca4ca85f603454ed9c153dc85036a9dc860f555c3de265bf1fc80c0ecae2",
+      "signature": "TBD"
     }
   ]
 }

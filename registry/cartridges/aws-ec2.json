@@ -1,0 +1,99 @@
+{
+  "name": "aws-ec2",
+  "applicability": {
+    "command": "aws",
+    "args": [
+      "--version"
+    ]
+  },
+  "catalog": [
+    {
+      "intent": "list",
+      "phrases": [
+        "list ec2 instances",
+        "show my ec2 instances",
+        "what instances are running"
+      ]
+    },
+    {
+      "intent": "start",
+      "phrases": [
+        "start instance X",
+        "boot ec2 instance X"
+      ]
+    },
+    {
+      "intent": "stop",
+      "phrases": [
+        "stop instance X",
+        "shutdown ec2 instance X"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "intent": "list",
+      "command": "aws",
+      "args": [
+        "ec2",
+        "describe-instances",
+        "--query",
+        "Reservations[*].Instances[*].[InstanceId,State.Name,InstanceType]",
+        "--output",
+        "table"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    },
+    {
+      "intent": "start",
+      "command": "aws",
+      "args": [
+        "ec2",
+        "start-instances",
+        "--instance-ids",
+        "{id}"
+      ],
+      "risk": "mutating",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "id",
+          "extractor": "after-verb",
+          "verbs": [
+            "start",
+            "boot"
+          ],
+          "required": true
+        }
+      ]
+    },
+    {
+      "intent": "stop",
+      "command": "aws",
+      "args": [
+        "ec2",
+        "stop-instances",
+        "--instance-ids",
+        "{id}"
+      ],
+      "risk": "destructive",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": [
+        {
+          "name": "id",
+          "extractor": "after-verb",
+          "verbs": [
+            "stop",
+            "shutdown"
+          ],
+          "required": true
+        }
+      ]
+    }
+  ]
+}

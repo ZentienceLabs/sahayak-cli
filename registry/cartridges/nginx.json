@@ -1,0 +1,51 @@
+{
+  "name": "nginx",
+  "applicability": {
+    "command": "nginx",
+    "args": [
+      "-v"
+    ]
+  },
+  "catalog": [
+    {
+      "intent": "test",
+      "phrases": [
+        "test nginx config",
+        "is nginx config valid",
+        "check nginx config"
+      ]
+    },
+    {
+      "intent": "reload",
+      "phrases": [
+        "reload nginx",
+        "apply nginx config"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "intent": "test",
+      "command": "nginx",
+      "args": [
+        "-t"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    },
+    {
+      "intent": "reload",
+      "command": "nginx",
+      "args": [
+        "-s",
+        "reload"
+      ],
+      "risk": "mutating",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    }
+  ]
+}

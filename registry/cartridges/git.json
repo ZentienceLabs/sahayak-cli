@@ -1,0 +1,53 @@
+{
+  "name": "git",
+  "applicability": {
+    "command": "git",
+    "args": [
+      "--version"
+    ]
+  },
+  "catalog": [
+    {
+      "intent": "status",
+      "phrases": [
+        "git status",
+        "show repo status",
+        "what is changed in git"
+      ]
+    },
+    {
+      "intent": "log",
+      "phrases": [
+        "git log",
+        "show recent commits"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "intent": "status",
+      "command": "git",
+      "args": [
+        "status"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    },
+    {
+      "intent": "log",
+      "command": "git",
+      "args": [
+        "log",
+        "--oneline",
+        "-n",
+        "10"
+      ],
+      "risk": "read-only",
+      "processor": "raw",
+      "shape": "simple",
+      "slots": []
+    }
+  ]
+}
